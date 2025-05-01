@@ -20,8 +20,8 @@ public class CourseMapper {
         courseDto.setName(course.getName());
         courseDto.setDescription(course.getDescription());
 
-        if (course.getGroups() != null) {
-            courseDto.setGroup(GroupMapper.toDtoList(course.getGroups()));
+        if (course.getClassess() != null) {
+            courseDto.setClasses(ClassesMapper.toDtoList(course.getClassess()));
         }
 
         if (course.getEvaluations() != null) {
@@ -41,8 +41,6 @@ public class CourseMapper {
         course.setName(courseDto.getName());
         course.setDescription(courseDto.getDescription());
 
-        // Nota: converter group e evaluations no service
-        
         return course;
     }
 

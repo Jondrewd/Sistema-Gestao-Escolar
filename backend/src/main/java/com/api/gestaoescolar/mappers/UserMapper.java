@@ -28,7 +28,7 @@ public class UserMapper {
             userDto.setUserType("STUDENT");
             userDto.setRegistrationNumber(student.getRegistrationNumber());
 
-            userDto.setStudentGroups(GroupMapper.toDtoList(student.getGroups()));
+            userDto.setStudentClassess(ClassesMapper.toDtoList(student.getClassess()));
             userDto.setEvaluations(EvaluationMapper.toDtoList(student.getEvaluations()));
             userDto.setAttendances(AttendanceMapper.toDtoList(student.getAttendances()));
 
@@ -37,7 +37,7 @@ public class UserMapper {
             userDto.setUserType("TEACHER");
             userDto.setSpeciality(teacher.getSpeciality());
 
-            userDto.setTeacherGroups(GroupMapper.toDtoList(teacher.getGroups()));
+            userDto.setTeacherClassess(ClassesMapper.toDtoList(teacher.getClassess()));
         }
 
         return userDto;
@@ -59,7 +59,7 @@ public class UserMapper {
             teacher.setSpeciality(userDto.getSpeciality());
             user = teacher;
         } else {
-            user = new User() {};  // Lembrar de nao usar generico, preciso mudar
+            user = new User() {}; 
         }
 
         user.setId(userDto.getId());
@@ -72,7 +72,6 @@ public class UserMapper {
             user.setSchoolRole(SchoolRoles.valueOf(userDto.getSchoolRole()));
         }
 
-        // Tratar groups, evaluations, attendances no service
 
         return user;
     }

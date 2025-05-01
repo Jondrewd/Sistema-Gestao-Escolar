@@ -20,16 +20,16 @@ public class Course {
     private String description;
 
     @OneToMany(mappedBy = "course")
-    private List<Group> group;
+    private List<Classes> classes;
 
     @OneToMany(mappedBy = "course")
     private List<Evaluation> evaluations;
 
-    public Course(Long id, String name, String description, List<Group> group, List<Evaluation> evaluations) {
+    public Course(Long id, String name, String description, List<Classes> classes, List<Evaluation> evaluations) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.group = group;
+        this.classes = classes;
         this.evaluations = evaluations;
     }
 
@@ -60,12 +60,12 @@ public class Course {
     }
     
 
-    public List<Group> getClasses() {
-        return group;
+    public List<Classes> getClassess() {
+        return classes;
     }
 
-    public void setClasses(List<Group> group) {
-        this.group = group;
+    public void setClassess(List<Classes> classes) {
+        this.classes = classes;
     }
 
     public List<Evaluation> getEvaluations() {

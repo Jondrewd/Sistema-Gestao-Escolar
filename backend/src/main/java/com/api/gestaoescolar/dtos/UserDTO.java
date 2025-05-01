@@ -15,13 +15,13 @@ public class UserDTO {
     
     /* Student */
     private Long registrationNumber;
-    private List<GroupDTO> studentGroups = new ArrayList<>();
+    private List<ClassesDTO> studentClassess = new ArrayList<>();
     private List<EvaluationDTO> evaluations = new ArrayList<>();
     private List<AttendanceDTO> attendances = new ArrayList<>();
 
     /*Teacher*/
     private String speciality;
-    private List<GroupDTO> teacherGroups = new ArrayList<>();
+    private List<ClassesDTO> teacherClassess = new ArrayList<>();
 
     public UserDTO() {}
 
@@ -101,12 +101,12 @@ public class UserDTO {
         this.registrationNumber = registrationNumber;
     }
 
-    public List<GroupDTO> getStudentGroups() {
-        return studentGroups;
+    public List<ClassesDTO> getStudentClassess() {
+        return studentClassess;
     }
 
-    public void setStudentGroups(List<GroupDTO> studentGroups) {
-        this.studentGroups = studentGroups;
+    public void setStudentClassess(List<ClassesDTO> studentClassess) {
+        this.studentClassess = studentClassess;
     }
 
     public List<EvaluationDTO> getEvaluations() {
@@ -133,12 +133,12 @@ public class UserDTO {
         this.speciality = speciality;
     }
 
-    public List<GroupDTO> getTeacherGroups() {
-        return teacherGroups;
+    public List<ClassesDTO> getTeacherClassess() {
+        return teacherClassess;
     }
 
-    public void setTeacherGroups(List<GroupDTO> teacherGroups) {
-        this.teacherGroups = teacherGroups;
+    public void setTeacherClassess(List<ClassesDTO> teacherClassess) {
+        this.teacherClassess = teacherClassess;
     }
 
 }

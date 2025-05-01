@@ -8,14 +8,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "class_groups")  
-public class Group {
+@Table(name = "class_classes")  
+public class Classes {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +34,10 @@ public class Group {
     @ManyToMany
     private List<Student> students = new ArrayList<>();
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "classes")
     private List<Attendance> attendances = new ArrayList<>();
 
-    public Group(Long id, String name, Teacher teacher, Course course, 
+    public Classes(Long id, String name, Teacher teacher, Course course, 
                 List<Student> students, List<Attendance> attendances) {
         this.id = id;
         this.name = name;
@@ -47,11 +47,11 @@ public class Group {
         this.attendances = attendances != null ? attendances : new ArrayList<>();
     }
 
-    public Group(String name, Teacher teacher, Course course) {
+    public Classes(String name, Teacher teacher, Course course) {
         this(null, name, teacher, course, null, null);
     }
 
-    public Group() {}
+    public Classes() {}
 
     public Long getId() {
         return id;
@@ -104,21 +104,21 @@ public class Group {
     public void addStudent(Student student) {
         if (student != null && !this.students.contains(student)) {
             this.students.add(student);
-            student.getGroups().add(this);
+            student.getClassess().add(this);
         }
     }
 
     public void removeStudent(Student student) {
         if (student != null) {
             this.students.remove(student);
-            student.getGroups().remove(this);
+            student.getClassess().remove(this);
         }
     }
 
     public void addAttendance(Attendance attendance) {
         if (attendance != null) {
             this.attendances.add(attendance);
-            attendance.setGroup(this);
+            attendance.setClasses(this);
         }
     }
 
@@ -138,7 +138,7 @@ public class Group {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Group other = (Group) obj;
+        Classes other = (Classes) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

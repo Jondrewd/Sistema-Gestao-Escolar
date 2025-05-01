@@ -17,14 +17,14 @@ public class Teacher extends User {
     private String speciality;
 
     @OneToMany(mappedBy = "teacher")
-    private List<Group> Groups = new ArrayList<>();
+    private List<Classes> Classess = new ArrayList<>();
 
     public Teacher(Long id, String username, String email, String password, 
                   SchoolRoles schoolRoles, Instant createdAt, List<Roles> roles, 
-                  String speciality, List<Group> Groups) {
+                  String speciality, List<Classes> Classess) {
         super(id, username, email, password, schoolRoles, createdAt, roles);
         this.speciality = speciality;
-        this.Groups = Groups != null ? Groups : new ArrayList<>();
+        this.Classess = Classess != null ? Classess : new ArrayList<>();
     }
 
     public Teacher(String username, String email, String password, 
@@ -45,25 +45,25 @@ public class Teacher extends User {
         this.speciality = speciality;
     }
 
-    public List<Group> getGroups() {
-        return Groups;
+    public List<Classes> getClassess() {
+        return Classess;
     }
 
-    public void setGroups(List<Group> Groups) {
-        this.Groups = Groups != null ? Groups : new ArrayList<>();
+    public void setClassess(List<Classes> Classess) {
+        this.Classess = Classess != null ? Classess : new ArrayList<>();
     }
 
-    public void addGroup(Group group) {
-        if (group != null) {
-            this.Groups.add(group);
-            group.setTeacher(this);
+    public void addClasses(Classes classes) {
+        if (classes != null) {
+            this.Classess.add(classes);
+            classes.setTeacher(this);
         }
     }
 
-    public void removeGroup(Group group) {
-        if (group != null) {
-            this.Groups.remove(group);
-            group.setTeacher(null);
+    public void removeClasses(Classes classes) {
+        if (classes != null) {
+            this.Classess.remove(classes);
+            classes.setTeacher(null);
         }
     }
 }

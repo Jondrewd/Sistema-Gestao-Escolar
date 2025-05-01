@@ -24,8 +24,8 @@ public class AttendanceMapper {
             dto.setStudent(attendance.getStudent().getUsername()); 
         }
 
-        if (attendance.getGroup() != null) {
-            dto.setGroupId(attendance.getGroup().getId()); 
+        if (attendance.getClasses() != null) {
+            dto.setClassesId(attendance.getClasses().getId()); 
         }
 
         return dto;
@@ -52,5 +52,15 @@ public class AttendanceMapper {
         return attendances.stream()
                 .map(AttendanceMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+    public static void updateFromDto(AttendanceDTO dto, Attendance entity) {
+        if (dto == null || entity == null) return;
+        if (dto.getDate() != null) {
+            entity.setDate(dto.getDate());
+        }     
+        if (dto.getPresent() != null) {
+            entity.setPresent(dto.getPresent());
+        }
+
     }
 }

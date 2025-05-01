@@ -7,11 +7,11 @@ public class AttendanceDTO {
     private Instant date;
     private Boolean present;
     private String student;
-    private Long groupId;
+    private Long classesId;
 
-    public AttendanceDTO(Instant date, Long groupId, Long id, Boolean present, String student) {
+    public AttendanceDTO(Instant date, Long classesId, Long id, Boolean present, String student) {
         this.date = date;
-        this.groupId = groupId;
+        this.classesId = classesId;
         this.id = id;
         this.present = present;
         this.student = student;
@@ -51,12 +51,12 @@ public class AttendanceDTO {
         this.student = student;
     }
 
-    public Long getGroupId() {
-        return groupId;
+    public Long getClassesId() {
+        return classesId;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setClassesId(Long classesId) {
+        this.classesId = classesId;
     }
     
     

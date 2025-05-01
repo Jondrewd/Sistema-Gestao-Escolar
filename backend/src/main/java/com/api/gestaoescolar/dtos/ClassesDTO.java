@@ -3,7 +3,7 @@ package com.api.gestaoescolar.dtos;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupDTO {
+public class ClassesDTO {
       
     private Long id;
     private String name;
@@ -12,14 +12,14 @@ public class GroupDTO {
     private List<String> students = new ArrayList<>();
     private List<AttendanceDTO> attendances = new ArrayList<>();
 
-    public GroupDTO(CourseDTO course, Long id, String name, String teacher) {
+    public ClassesDTO(CourseDTO course, Long id, String name, String teacher) {
         this.course = course;
         this.id = id;
         this.name = name;
         this.teacher = teacher;
     }
 
-    public GroupDTO() {}
+    public ClassesDTO() {}
 
     public Long getId() {
         return id;

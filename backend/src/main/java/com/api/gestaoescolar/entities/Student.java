@@ -18,7 +18,7 @@ public class Student extends User {
     private Long registrationNumber;
 
     @ManyToMany(mappedBy = "students")
-    private List<Group> Groups = new ArrayList<>();
+    private List<Classes> Classess = new ArrayList<>();
     
     @OneToMany(mappedBy = "student")
     private List<Evaluation> evaluations = new ArrayList<>();
@@ -28,16 +28,15 @@ public class Student extends User {
 
     public Student(Long id, String username, String email, String password, 
                   SchoolRoles schoolRoles, Instant createdAt, List<Roles> roles, 
-                  Long registrationNumber, List<Group> Groups, 
+                  Long registrationNumber, List<Classes> Classess, 
                   List<Evaluation> evaluations, List<Attendance> attendances) {
         super(id, username, email, password, schoolRoles, createdAt, roles);
         this.registrationNumber = registrationNumber;
-        this.Groups = Groups != null ? Groups : new ArrayList<>();
+        this.Classess = Classess != null ? Classess : new ArrayList<>();
         this.evaluations = evaluations != null ? evaluations : new ArrayList<>();
         this.attendances = attendances != null ? attendances : new ArrayList<>();
     }
 
-    // Construtor simplificado para criação
     public Student(String username, String email, String password, 
                   Long registrationNumber) {
         super(null, username, email, password, SchoolRoles.STUDENT, Instant.now(), null);
@@ -48,7 +47,6 @@ public class Student extends User {
         super();
     }
 
-    // Getters e Setters
     public Long getRegistrationNumber() {
         return registrationNumber;
     }
@@ -57,12 +55,12 @@ public class Student extends User {
         this.registrationNumber = registrationNumber;
     }
 
-    public List<Group> getGroups() {
-        return Groups;
+    public List<Classes> getClassess() {
+        return Classess;
     }
 
-    public void setGroups(List<Group> Groups) {
-        this.Groups = Groups != null ? Groups : new ArrayList<>();
+    public void setClassess(List<Classes> Classess) {
+        this.Classess = Classess != null ? Classess : new ArrayList<>();
     }
 
     public List<Evaluation> getEvaluations() {
@@ -81,17 +79,17 @@ public class Student extends User {
         this.attendances = attendances != null ? attendances : new ArrayList<>();
     }
 
-    public void enrollInGroup(Group group) {
-        if (group != null && !this.Groups.contains(group)) {
-            this.Groups.add(group);
-            group.getStudents().add(this);
+    public void enrollInClasses(Classes classes) {
+        if (classes != null && !this.Classess.contains(classes)) {
+            this.Classess.add(classes);
+            classes.getStudents().add(this);
         }
     }
 
-    public void unenrollFromGroup(Group group) {
-        if (group != null) {
-            this.Groups.remove(group);
-            group.getStudents().remove(this);
+    public void unenrollFromClasses(Classes classes) {
+        if (classes != null) {
+            this.Classess.remove(classes);
+            classes.getStudents().remove(this);
         }
     }
 

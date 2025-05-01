@@ -24,15 +24,15 @@ public class Attendance {
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
-    private Group group;
+    @JoinColumn(name = "classes_id", referencedColumnName = "id")
+    private Classes classes;
 
-    public Attendance(Long id, Instant date, Boolean present, Student student, Group group) {
+    public Attendance(Long id, Instant date, Boolean present, Student student, Classes classes) {
         this.id = id;
         this.date = date;
         this.present = present;
         this.student = student;
-        this.group = group;
+        this.classes = classes;
     }
 
     public Attendance() {}
@@ -70,12 +70,12 @@ public class Attendance {
         this.student = student;
     }
 
-    public Group getGroup() {
-        return group;
+    public Classes getClasses() {
+        return classes;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setClasses(Classes classes) {
+        this.classes = classes;
     }
 
     @Override

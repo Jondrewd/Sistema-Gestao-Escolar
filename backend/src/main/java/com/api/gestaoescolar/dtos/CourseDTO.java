@@ -6,16 +6,16 @@ public class CourseDTO {
     private Long id;
     private String name;
     private String description;
-    private List<GroupDTO> group;
+    private List<ClassesDTO> classes;
     private List<EvaluationDTO> evaluations;
 
     public CourseDTO() {
     }
 
-    public CourseDTO(String description, List<EvaluationDTO> evaluations, List<GroupDTO> group, Long id, String name) {
+    public CourseDTO(String description, List<EvaluationDTO> evaluations, List<ClassesDTO> classes, Long id, String name) {
         this.description = description;
         this.evaluations = evaluations;
-        this.group = group;
+        this.classes = classes;
         this.id = id;
         this.name = name;
     }
@@ -37,11 +37,11 @@ public class CourseDTO {
     public void setDescription(String description) {
         this.description = description;
     }
-    public List<GroupDTO> getGroup() {
-        return group;
+    public List<ClassesDTO> getClasses() {
+        return classes;
     }
-    public void setGroup(List<GroupDTO> group) {
-        this.group = group;
+    public void setClasses(List<ClassesDTO> classes) {
+        this.classes = classes;
     }
     public List<EvaluationDTO> getEvaluations() {
         return evaluations;

@@ -42,8 +42,6 @@ public class EvaluationMapper {
         entity.setDate(dto.getDate());
         entity.setScore(dto.getScore());
 
-        // Nota: o Course e o Student devem ser tratados no Service
-        
         return entity;
     }
 
