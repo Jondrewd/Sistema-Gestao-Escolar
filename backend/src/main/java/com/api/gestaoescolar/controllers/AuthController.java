@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.gestaoescolar.dtos.AccountCredentialsDTO;
-import com.api.gestaoescolar.dtos.RegisterDTO;
+import com.api.gestaoescolar.dtos.RegisterStudentDTO;
+import com.api.gestaoescolar.dtos.RegisterTeacherDTO;
 import com.api.gestaoescolar.dtos.TokenDTO;
 import com.api.gestaoescolar.services.AuthService;
 
@@ -28,13 +29,22 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @Operation(summary= "Registra um Usuario")
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDTO data){
+    @Operation(summary= "Registra um Estudante")
+    @PostMapping("/register/student")
+    public ResponseEntity<String> registerStudent(@RequestBody RegisterStudentDTO data){
         if(checkParamIsNotNull(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request.");
-        authService.register(data);
-        return ResponseEntity.ok("Usuário Registrado.");
+        authService.registerStudent(data);
+        return ResponseEntity.ok("Aluno Registrado.");
+    }
+
+    @Operation(summary= "Registra um Professor")
+    @PostMapping("/register/teacher")
+    public ResponseEntity<String> registerTeacher(@RequestBody RegisterTeacherDTO data){
+        if(checkParamIsNotNull(data))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request.");
+        authService.registerTeacher(data);
+        return ResponseEntity.ok("Professor Registrado.");
     }
 
     @Operation(summary = "Realiza login de um usuário")
@@ -64,8 +74,11 @@ public class AuthController {
         return refreshToken == null || refreshToken.isBlank() || username == null || username.isBlank();
     }
     
-    
-   private boolean checkParamIsNotNull(RegisterDTO data){
+    private boolean checkParamIsNotNull(RegisterStudentDTO data){
+        return data == null || data.getUsername() == null || data.getUsername().isBlank() ||
+        data.getPassword() == null || data.getPassword().isBlank();
+    }
+    private boolean checkParamIsNotNull(RegisterTeacherDTO data){
         return data == null || data.getUsername() == null || data.getUsername().isBlank() ||
         data.getPassword() == null || data.getPassword().isBlank();
     }

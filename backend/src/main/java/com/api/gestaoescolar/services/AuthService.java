@@ -3,6 +3,8 @@ package com.api.gestaoescolar.services;
 import com.api.gestaoescolar.config.SecurityConfig;
 import com.api.gestaoescolar.dtos.AccountCredentialsDTO;
 import com.api.gestaoescolar.dtos.RegisterDTO;
+import com.api.gestaoescolar.dtos.RegisterStudentDTO;
+import com.api.gestaoescolar.dtos.RegisterTeacherDTO;
 import com.api.gestaoescolar.dtos.TokenDTO;
 import com.api.gestaoescolar.entities.Roles;
 import com.api.gestaoescolar.entities.Student;
@@ -43,44 +45,45 @@ public class AuthService {
     @Autowired
     private SecurityConfig config;
 
-   public ResponseEntity<String> register(RegisterDTO data) {
+   public ResponseEntity<String> registerTeacher(RegisterTeacherDTO data) {
     if (checkUsername(data.getUsername())) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body("Já existe um usuário cadastrado com esse nome de usuário.");
     }
-
     User newUser;
     Roles roles = roleRepository.findByName("ROLE_USER").get();
-
-    switch (data.getUserType().toUpperCase()) {
-        case "STUDENT" -> {
-            Student student = new Student();
-            student.setUsername(data.getUsername());
-            student.setEmail(data.getEmail());
-            student.setRoles(Collections.singletonList(roles));
-            student.setPassword(config.passwordEncoder().encode(data.getPassword())); 
-            newUser = student;
-            }
-
-        case "TEACHER" -> {
             Teacher teacher = new Teacher();
             teacher.setUsername(data.getUsername());
             teacher.setEmail(data.getEmail());
             teacher.setPassword(config.passwordEncoder().encode(data.getPassword())); 
             teacher.setRoles(Collections.singletonList(roles));
             newUser = teacher;
-            }
-        default -> {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Tipo de usuário inválido: " + data.getUserType());
-            }
-    }
 
         repository.save(newUser); 
 
     return ResponseEntity.status(HttpStatus.CREATED)
             .body("Usuário registrado com sucesso.");
 }
+
+    public ResponseEntity<String> registerStudent(RegisterStudentDTO data) {
+        if (checkUsername(data.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Já existe um usuário cadastrado com esse nome de usuário.");
+        }
+
+        User newUser;
+        Roles roles = roleRepository.findByName("ROLE_USER").get();
+                Student student = new Student();
+                student.setUsername(data.getUsername());
+                student.setEmail(data.getEmail());
+                student.setRoles(Collections.singletonList(roles));
+                student.setPassword(config.passwordEncoder().encode(data.getPassword())); 
+                newUser = student;
+            repository.save(newUser); 
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Usuário registrado com sucesso.");
+    }
 
     public ResponseEntity<TokenDTO> signin(AccountCredentialsDTO data) {
         try {

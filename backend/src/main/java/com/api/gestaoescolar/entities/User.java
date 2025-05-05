@@ -3,6 +3,7 @@ package com.api.gestaoescolar.entities;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -150,6 +151,12 @@ public abstract class User {
 
     public List<Roles> getRoles() {
         return roles;
+    }
+
+    public List<String> getRoleNames() {
+        return this.roles.stream()
+                .map(Roles::getName)
+                .collect(Collectors.toList());
     }
 
     public void setRoles(List<Roles> roles) {
