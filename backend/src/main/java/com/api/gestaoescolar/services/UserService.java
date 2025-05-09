@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.api.gestaoescolar.dtos.UserDTO;
+
 import com.api.gestaoescolar.entities.User;
 import com.api.gestaoescolar.exceptions.ResourceNotFoundException;
 import com.api.gestaoescolar.mappers.UserMapper;
@@ -54,16 +55,7 @@ public class UserService implements UserDetailsService {
         User existingUser = userRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + id));
 
-        if (userDTO.getUsername() != null) {
-            existingUser.setUsername(userDTO.getUsername());
-        }
-        if (userDTO.getEmail() != null) {
-            existingUser.setEmail(userDTO.getEmail());
-        }
-        if (userDTO.getPassword() != null) {
-            existingUser.setPassword(userDTO.getPassword());
-        }
-
+        UserMapper.updateFromDto(userDTO, existingUser);
         User updatedUser = userRepository.save(existingUser);
         return UserMapper.toDto(updatedUser);
     }
@@ -76,14 +68,66 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
     @Transactional(readOnly = true)
-    public Page<UserDTO> findAllByType(String schoolRole, Pageable pageable) {
-        Page<User> users = userRepository.findAllBySchoolRole(schoolRole, pageable);
-        
-        if (users.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhum usuário encontrado para o tipo: " + schoolRole);
-        }
-        
-        return users.map(UserMapper::toDto);
+    public UserDTO findByCpf(String cpf) {
+        User student = userRepository.findByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
+        return UserMapper.toDto(student);
+    }
+    @Transactional
+    public void deleteByCpf(String cpf) {
+        User student = userRepository.findByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
+        userRepository.delete(student);
+    }
+
+    // Métodos para Students
+    @Transactional(readOnly = true)
+    public Page<UserDTO> findAllStudents(Pageable pageable) {
+        Page<User> students = userRepository.findAllByUserType("STUDENT", pageable);
+        return students.map(UserMapper::toDto);
+    }
+
+    @Transactional
+    public UserDTO createStudent(UserDTO studentDTO) {
+        studentDTO.setUserType("STUDENT");
+        User student = UserMapper.toEntity(studentDTO);
+        User savedStudent = userRepository.save(student);
+        return UserMapper.toDto(savedStudent);
+    }
+
+    @Transactional
+    public UserDTO updateStudent(String cpf, UserDTO studentDTO) {
+        User existingStudent = userRepository.findByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
+
+        UserMapper.updateFromDto(studentDTO, existingStudent);
+        User updatedStudent = userRepository.save(existingStudent);
+        return UserMapper.toDto(updatedStudent);
+}
+
+    // Métodos para Teachers
+    @Transactional(readOnly = true)
+    public Page<UserDTO> findAllTeachers(Pageable pageable) {
+        Page<User> teachers = userRepository.findAllByUserType("TEACHER", pageable);
+        return teachers.map(UserMapper::toDto);
+    }
+
+    @Transactional
+    public UserDTO createTeacher(UserDTO teacherDTO) {
+        teacherDTO.setUserType("TEACHER");
+        User teacher = UserMapper.toEntity(teacherDTO);
+        User savedTeacher = userRepository.save(teacher);
+        return UserMapper.toDto(savedTeacher);
+    }
+
+    @Transactional
+    public UserDTO updateTeacher(String cpf, UserDTO teacherDTO) {
+        User existingTeacher = userRepository.findByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Professor não encontrado com CPF: " + cpf));
+
+        UserMapper.updateFromDto(teacherDTO, existingTeacher);
+        User updatedTeacher = userRepository.save(existingTeacher);
+        return UserMapper.toDto(updatedTeacher);
     }
 
 
@@ -91,9 +135,6 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado: " + username);
-        }
 
         List<GrantedAuthority> authorities = user.getRoles().stream()
             .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
@@ -106,5 +147,8 @@ public class UserService implements UserDetailsService {
         );
     }
 
-
+    @Transactional(readOnly = true)
+    public boolean existsByCpf(String cpf) {
+        return userRepository.existsByCpf(cpf);
+    }
 }

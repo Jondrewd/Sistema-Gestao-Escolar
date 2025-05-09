@@ -20,8 +20,8 @@ public class CourseMapper {
         courseDto.setName(course.getName());
         courseDto.setDescription(course.getDescription());
 
-        if (course.getClassess() != null) {
-            courseDto.setClasses(ClassesMapper.toDtoList(course.getClassess()));
+        if (course.getClasses() != null) {
+            courseDto.setClasses(ClassesMapper.toDtoList(course.getClasses()));
         }
 
         if (course.getEvaluations() != null) {

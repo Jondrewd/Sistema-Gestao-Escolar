@@ -1,7 +1,5 @@
 package com.api.gestaoescolar.dtos;
 
-
-
 import java.io.Serializable;
 
 public class AccountCredentialsDTO implements Serializable {

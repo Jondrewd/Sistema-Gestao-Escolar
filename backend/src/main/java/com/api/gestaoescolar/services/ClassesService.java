@@ -42,8 +42,8 @@ public class ClassesService {
                 Teacher teacher = userRepository.findTeacherByUsername(classesDTO.getTeacher())
                         .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado ou não é do tipo TEACHER: " + classesDTO.getTeacher()));
                 
-                Course course = courseRepository.findById(classesDTO.getCourse().getId())
-                        .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com ID: " + classesDTO.getCourse().getId()));
+                Course course = courseRepository.findById(classesDTO.getCourse())
+                        .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com ID: " + classesDTO.getCourse()));
                 
                 List<Student> students = userRepository.findStudentsByUsernames(classesDTO.getStudents())
                         .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
@@ -103,8 +103,8 @@ public class ClassesService {
             existingClass.setTeacher(newTeacher);
         }
         
-        if (!existingClass.getCourse().getId().equals(classesDTO.getCourse().getId())) {
-            Course newCourse = courseRepository.findById(classesDTO.getCourse().getId())
+        if (!existingClass.getCourse().getId().equals(classesDTO.getCourse())) {
+            Course newCourse = courseRepository.findById(classesDTO.getCourse())
                     .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
             existingClass.setCourse(newCourse);
         }

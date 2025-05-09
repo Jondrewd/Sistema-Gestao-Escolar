@@ -60,11 +60,11 @@ public class Course {
     }
     
 
-    public List<Classes> getClassess() {
+    public List<Classes> getClasses() {
         return classes;
     }
 
-    public void setClassess(List<Classes> classes) {
+    public void setClasses(List<Classes> classes) {
         this.classes = classes;
     }
 

@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassesDTO {
-      
+    
     private Long id;
     private String name;
     private String teacher;
-    private CourseDTO course;
+    private Long courseId;
     private List<String> students = new ArrayList<>();
     private List<AttendanceDTO> attendances = new ArrayList<>();
 
-    public ClassesDTO(CourseDTO course, Long id, String name, String teacher) {
-        this.course = course;
+    public ClassesDTO(Long courseId, Long id, String name, String teacher) {
+        this.courseId = courseId;
         this.id = id;
         this.name = name;
         this.teacher = teacher;
@@ -45,12 +45,12 @@ public class ClassesDTO {
         this.teacher = teacher;
     }
 
-    public CourseDTO getCourse() {
-        return course;
+    public Long getCourse() {
+        return courseId;
     }
 
-    public void setCourse(CourseDTO course) {
-        this.course = course;
+    public void setCourse(Long courseId) {
+        this.courseId = courseId;
     }
 
     public List<String> getStudents() {

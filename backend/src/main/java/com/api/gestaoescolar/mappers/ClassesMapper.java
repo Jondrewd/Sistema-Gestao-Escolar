@@ -20,13 +20,9 @@ public class ClassesMapper {
         ClassesDTO dto = new ClassesDTO();
         dto.setId(classes.getId());
         dto.setName(classes.getName());
-
+        dto.setCourse(classes.getCourse().getId());
         if (classes.getTeacher() != null) {
             dto.setTeacher(classes.getTeacher().getUsername());
-        }
-
-        if (classes.getCourse() != null) {
-            dto.setCourse(CourseMapper.toDto(classes.getCourse()));
         }
 
         if (classes.getStudents() != null) {

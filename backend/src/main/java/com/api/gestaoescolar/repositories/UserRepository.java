@@ -27,10 +27,13 @@ public interface UserRepository extends JpaRepository<User, Long>{
     @Query("SELECT s FROM Student s WHERE s.username = :username")
     Optional<Student> findStudentByUsername(@Param("username") String username);
 
-    @Query("SELECT t FROM Teacher t")
-    List<Teacher> findAllTeachers();
+    @Query(value = "SELECT * FROM users WHERE user_type = :userType", nativeQuery = true)
+    Page<User> findAllByUserType(@Param("userType") String userType, Pageable pageable);
 
-    @Query("SELECT u FROM User u WHERE u.schoolRole = :schoolRoles")
-    Page<User> findAllBySchoolRole(@Param("schoolRoles") String schoolRoles, Pageable pageable);
+    @Query("SELECT u FROM User u WHERE u.cpf = :cpf")
+    Optional<User> findByCpf(@Param("cpf") String cpf);
 
+    boolean existsByUsername(String username);
+    boolean existsByCpf(String cpf);
+    boolean existsByEmail(String email);
 }

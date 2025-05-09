@@ -104,14 +104,14 @@ public class Classes {
     public void addStudent(Student student) {
         if (student != null && !this.students.contains(student)) {
             this.students.add(student);
-            student.getClassess().add(this);
+            student.getClasses().add(this);
         }
     }
 
     public void removeStudent(Student student) {
         if (student != null) {
             this.students.remove(student);
-            student.getClassess().remove(this);
+            student.getClasses().remove(this);
         }
     }
 

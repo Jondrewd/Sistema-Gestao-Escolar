@@ -1,13 +1,14 @@
 package com.api.gestaoescolar.dtos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDTO {
     private Long id;
     private String name;
     private String description;
-    private List<ClassesDTO> classes;
-    private List<EvaluationDTO> evaluations;
+    private List<ClassesDTO> classes =  new ArrayList<>();;
+    private List<EvaluationDTO> evaluations =  new ArrayList<>();;
 
     public CourseDTO() {
     }
