@@ -4,7 +4,6 @@ import com.api.gestaoescolar.dtos.UserDTO;
 import com.api.gestaoescolar.entities.Student;
 import com.api.gestaoescolar.entities.Teacher;
 import com.api.gestaoescolar.entities.User;
-import com.api.gestaoescolar.entities.enums.SchoolRoles;
 
 public class UserMapper {
 
@@ -18,26 +17,26 @@ public class UserMapper {
         UserDTO userDto = new UserDTO();
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
+        userDto.setCpf(user.getCpf());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
         userDto.setCreatedAt(user.getCreatedAt());
-        userDto.setSchoolRole(user.getSchoolRole() != null ? user.getSchoolRole().name() : null);
-
+        
         if (user instanceof Student) {
-            Student student = (Student) user;
             userDto.setUserType("STUDENT");
-            userDto.setRegistrationNumber(student.getRegistrationNumber());
+        } else if (user instanceof Teacher) {
+            userDto.setUserType("TEACHER");
+        }
 
-            userDto.setStudentClassess(ClassesMapper.toDtoList(student.getClassess()));
+        if (user instanceof Student student) {
+            userDto.setRegistrationNumber(student.getRegistrationNumber());
+            userDto.setStudentClasses(ClassesMapper.toDtoList(student.getClasses()));
             userDto.setEvaluations(EvaluationMapper.toDtoList(student.getEvaluations()));
             userDto.setAttendances(AttendanceMapper.toDtoList(student.getAttendances()));
-
-        } else if (user instanceof Teacher) {
-            Teacher teacher = (Teacher) user;
-            userDto.setUserType("TEACHER");
+        } 
+        else if (user instanceof Teacher teacher) {
             userDto.setSpeciality(teacher.getSpeciality());
-
-            userDto.setTeacherClassess(ClassesMapper.toDtoList(teacher.getClassess()));
+            userDto.setTeacherClasses(ClassesMapper.toDtoList(teacher.getClasses()));
         }
 
         return userDto;
@@ -54,25 +53,51 @@ public class UserMapper {
             Student student = new Student();
             student.setRegistrationNumber(userDto.getRegistrationNumber());
             user = student;
-        } else if ("TEACHER".equalsIgnoreCase(userDto.getUserType())) {
+        } 
+        else if ("TEACHER".equalsIgnoreCase(userDto.getUserType())) {
             Teacher teacher = new Teacher();
             teacher.setSpeciality(userDto.getSpeciality());
             user = teacher;
-        } else {
-            user = new User() {}; 
+        } 
+        else {
+            user = new User() {};
         }
 
+        // Campos comuns
         user.setId(userDto.getId());
         user.setUsername(userDto.getUsername());
+        user.setCpf(userDto.getCpf());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
         user.setCreatedAt(userDto.getCreatedAt());
 
-        if (userDto.getSchoolRole() != null) {
-            user.setSchoolRole(SchoolRoles.valueOf(userDto.getSchoolRole()));
+        return user;
+    }
+
+    public static void updateFromDto(UserDTO userDto, User user) {
+        if (userDto == null || user == null) {
+            return;
         }
 
+        if (userDto.getUsername() != null) {
+            user.setUsername(userDto.getUsername());
+        }
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        if (userDto.getPassword() != null) {
+            user.setPassword(userDto.getPassword());
+        }
 
-        return user;
+        if (user instanceof Student student && "STUDENT".equalsIgnoreCase(userDto.getUserType())) {
+            if (userDto.getRegistrationNumber() != null) {
+                student.setRegistrationNumber(userDto.getRegistrationNumber());
+            }
+        } 
+        else if (user instanceof Teacher teacher && "TEACHER".equalsIgnoreCase(userDto.getUserType())) {
+            if (userDto.getSpeciality() != null) {
+                teacher.setSpeciality(userDto.getSpeciality());
+            }
+        }
     }
 }

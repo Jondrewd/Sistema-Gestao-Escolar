@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.api.gestaoescolar.entities.enums.SchoolRoles;
-
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
@@ -18,7 +16,7 @@ public class Student extends User {
     private Long registrationNumber;
 
     @ManyToMany(mappedBy = "students")
-    private List<Classes> Classess = new ArrayList<>();
+    private List<Classes> Classes = new ArrayList<>();
     
     @OneToMany(mappedBy = "student")
     private List<Evaluation> evaluations = new ArrayList<>();
@@ -26,21 +24,23 @@ public class Student extends User {
     @OneToMany(mappedBy = "student")
     private List<Attendance> attendances = new ArrayList<>();
 
-    public Student(Long id, String username, String email, String password, 
-                  SchoolRoles schoolRoles, Instant createdAt, List<Roles> roles, 
-                  Long registrationNumber, List<Classes> Classess, 
-                  List<Evaluation> evaluations, List<Attendance> attendances) {
-        super(id, username, email, password, schoolRoles, createdAt, roles);
+
+    public Student(Long id, String username, String cpf, String email, String password,
+            Instant createdAt, List<Roles> roles, Long registrationNumber, List<Classes> classes,
+            List<Evaluation> evaluations, List<Attendance> attendances) {
+        super(id, username, cpf, email, password, createdAt, roles);
         this.registrationNumber = registrationNumber;
-        this.Classess = Classess != null ? Classess : new ArrayList<>();
-        this.evaluations = evaluations != null ? evaluations : new ArrayList<>();
-        this.attendances = attendances != null ? attendances : new ArrayList<>();
+        Classes = classes;
+        this.evaluations = evaluations;
+        this.attendances = attendances;
     }
 
-    public Student(String username, String email, String password, 
-                  Long registrationNumber) {
-        super(null, username, email, password, SchoolRoles.STUDENT, Instant.now(), null);
+    public Student(Long registrationNumber, List<Classes> classes, List<Evaluation> evaluations,
+            List<Attendance> attendances) {
         this.registrationNumber = registrationNumber;
+        Classes = classes;
+        this.evaluations = evaluations;
+        this.attendances = attendances;
     }
 
     public Student() {
@@ -55,12 +55,12 @@ public class Student extends User {
         this.registrationNumber = registrationNumber;
     }
 
-    public List<Classes> getClassess() {
-        return Classess;
+    public List<Classes> getClasses() {
+        return Classes;
     }
 
-    public void setClassess(List<Classes> Classess) {
-        this.Classess = Classess != null ? Classess : new ArrayList<>();
+    public void setClasses(List<Classes> Classes) {
+        this.Classes = Classes != null ? Classes : new ArrayList<>();
     }
 
     public List<Evaluation> getEvaluations() {
@@ -80,15 +80,15 @@ public class Student extends User {
     }
 
     public void enrollInClasses(Classes classes) {
-        if (classes != null && !this.Classess.contains(classes)) {
-            this.Classess.add(classes);
+        if (classes != null && !this.Classes.contains(classes)) {
+            this.Classes.add(classes);
             classes.getStudents().add(this);
         }
     }
 
     public void unenrollFromClasses(Classes classes) {
         if (classes != null) {
-            this.Classess.remove(classes);
+            this.Classes.remove(classes);
             classes.getStudents().remove(this);
         }
     }

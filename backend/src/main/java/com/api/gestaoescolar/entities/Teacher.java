@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.api.gestaoescolar.entities.enums.SchoolRoles;
-
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -17,20 +15,20 @@ public class Teacher extends User {
     private String speciality;
 
     @OneToMany(mappedBy = "teacher")
-    private List<Classes> Classess = new ArrayList<>();
+    private List<Classes> Classes = new ArrayList<>();
 
-    public Teacher(Long id, String username, String email, String password, 
-                  SchoolRoles schoolRoles, Instant createdAt, List<Roles> roles, 
-                  String speciality, List<Classes> Classess) {
-        super(id, username, email, password, schoolRoles, createdAt, roles);
+
+    public Teacher(Long id, String username, String cpf, String email, String password,
+            Instant createdAt, List<Roles> roles, String speciality,
+            List<com.api.gestaoescolar.entities.Classes> classes) {
+        super(id, username, cpf, email, password, createdAt, roles);
         this.speciality = speciality;
-        this.Classess = Classess != null ? Classess : new ArrayList<>();
+        Classes = classes;
     }
 
-    public Teacher(String username, String email, String password, 
-                  String speciality) {
-        super(null, username, email, password, SchoolRoles.TEACHER, Instant.now(), null);
+    public Teacher(String speciality, List<com.api.gestaoescolar.entities.Classes> classes) {
         this.speciality = speciality;
+        Classes = classes;
     }
 
     public Teacher() {
@@ -45,24 +43,24 @@ public class Teacher extends User {
         this.speciality = speciality;
     }
 
-    public List<Classes> getClassess() {
-        return Classess;
+    public List<Classes> getClasses() {
+        return Classes;
     }
 
-    public void setClassess(List<Classes> Classess) {
-        this.Classess = Classess != null ? Classess : new ArrayList<>();
+    public void setClasses(List<Classes> Classes) {
+        this.Classes = Classes != null ? Classes : new ArrayList<>();
     }
 
     public void addClasses(Classes classes) {
         if (classes != null) {
-            this.Classess.add(classes);
+            this.Classes.add(classes);
             classes.setTeacher(this);
         }
     }
 
     public void removeClasses(Classes classes) {
         if (classes != null) {
-            this.Classess.remove(classes);
+            this.Classes.remove(classes);
             classes.setTeacher(null);
         }
     }

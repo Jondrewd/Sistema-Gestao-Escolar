@@ -8,6 +8,7 @@ public class UserDTO {
     private String userType;
     private Long id;
     private String username;
+    private String cpf;
     private String email;
     private String password;
     private Instant createdAt;
@@ -15,20 +16,21 @@ public class UserDTO {
     
     /* Student */
     private Long registrationNumber;
-    private List<ClassesDTO> studentClassess = new ArrayList<>();
+    private List<ClassesDTO> studentClasses = new ArrayList<>();
     private List<EvaluationDTO> evaluations = new ArrayList<>();
     private List<AttendanceDTO> attendances = new ArrayList<>();
 
     /*Teacher*/
     private String speciality;
-    private List<ClassesDTO> teacherClassess = new ArrayList<>();
+    private List<ClassesDTO> teacherClasses = new ArrayList<>();
 
     public UserDTO() {}
 
-    public UserDTO(Instant createdAt, String email, Long id, String password, Long registrationNumber, String schoolRole, String speciality, String userType, String username) {
+    public UserDTO(Instant createdAt, String cpf, String email, Long id, String password, Long registrationNumber, String schoolRole, String speciality, String userType, String username) {
         this.createdAt = createdAt;
         this.email = email;
         this.id = id;
+        this.cpf = cpf;
         this.password = password;
         this.registrationNumber = registrationNumber;
         this.schoolRole = schoolRole;
@@ -41,8 +43,16 @@ public class UserDTO {
         return userType;
     }
 
+
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public Long getId() {
@@ -101,13 +111,18 @@ public class UserDTO {
         this.registrationNumber = registrationNumber;
     }
 
-    public List<ClassesDTO> getStudentClassess() {
-        return studentClassess;
+    public List<ClassesDTO> getStudentClasses() {
+        return studentClasses;
     }
+ 
+public void setStudentClasses(List<ClassesDTO> studentClasses) {
+    this.studentClasses = studentClasses;
+}
 
-    public void setStudentClassess(List<ClassesDTO> studentClassess) {
-        this.studentClassess = studentClassess;
-    }
+public void setTeacherClasses(List<ClassesDTO> teacherClasses) {
+    this.teacherClasses = teacherClasses;
+}
+
 
     public List<EvaluationDTO> getEvaluations() {
         return evaluations;
@@ -133,12 +148,9 @@ public class UserDTO {
         this.speciality = speciality;
     }
 
-    public List<ClassesDTO> getTeacherClassess() {
-        return teacherClassess;
+    public List<ClassesDTO> getTeacherClasses() {
+        return teacherClasses;
     }
 
-    public void setTeacherClassess(List<ClassesDTO> teacherClassess) {
-        this.teacherClassess = teacherClassess;
-    }
 
 }

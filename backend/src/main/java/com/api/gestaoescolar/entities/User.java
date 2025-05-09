@@ -7,14 +7,10 @@ import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.api.gestaoescolar.entities.enums.SchoolRoles;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +18,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
@@ -32,16 +29,13 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    private String cpf;
     private String email;
     private String password;
     
     @CreationTimestamp
     private Instant createdAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "school_roles", insertable=false, updatable=false)
-    private SchoolRoles schoolRole;
-    
     @Column(name = "account_non_expired")
     private boolean accountNonExpired = true;
 
@@ -57,13 +51,13 @@ public abstract class User {
     @ManyToMany
     private List<Roles> roles = new ArrayList<>();
 
-    public User(Long id, String username, String email, String password, SchoolRoles schoolRole, Instant createdAt,
+    public User(Long id, String username, String cpf, String email, String password, Instant createdAt,
             List<Roles> roles) {
         this.id = id;
         this.username = username;
+        this.cpf = cpf;
         this.email = email;
         this.password = password;
-        this.schoolRole = schoolRole;
         this.createdAt = createdAt;
         this.roles = roles;
     }
@@ -85,6 +79,7 @@ public abstract class User {
     public void setUsername(String username) {
         this.username = username;
     }
+    
 
     public String getEmail() {
         return email;
@@ -102,13 +97,6 @@ public abstract class User {
         this.password = password;
     }
 
-    public SchoolRoles getSchoolRole() {
-        return schoolRole;
-    }
-
-    public void setSchoolRole(SchoolRoles schoolRole) {
-        this.schoolRole = schoolRole;
-    }
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -186,6 +174,14 @@ public abstract class User {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
     
 }

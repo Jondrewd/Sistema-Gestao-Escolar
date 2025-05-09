@@ -2,7 +2,6 @@ package com.api.gestaoescolar.services;
 
 import com.api.gestaoescolar.config.SecurityConfig;
 import com.api.gestaoescolar.dtos.AccountCredentialsDTO;
-import com.api.gestaoescolar.dtos.RegisterDTO;
 import com.api.gestaoescolar.dtos.RegisterStudentDTO;
 import com.api.gestaoescolar.dtos.RegisterTeacherDTO;
 import com.api.gestaoescolar.dtos.TokenDTO;
@@ -54,6 +53,7 @@ public class AuthService {
     Roles roles = roleRepository.findByName("ROLE_USER").get();
             Teacher teacher = new Teacher();
             teacher.setUsername(data.getUsername());
+            teacher.setCpf(data.getCpf());
             teacher.setEmail(data.getEmail());
             teacher.setPassword(config.passwordEncoder().encode(data.getPassword())); 
             teacher.setRoles(Collections.singletonList(roles));
@@ -75,6 +75,7 @@ public class AuthService {
         Roles roles = roleRepository.findByName("ROLE_USER").get();
                 Student student = new Student();
                 student.setUsername(data.getUsername());
+                student.setCpf(data.getCpf());
                 student.setEmail(data.getEmail());
                 student.setRoles(Collections.singletonList(roles));
                 student.setPassword(config.passwordEncoder().encode(data.getPassword())); 
