@@ -79,4 +79,9 @@ public AttendanceDTO update(Long id, AttendanceDTO dto) {
     Attendance updated = attendanceRepository.save(entity);
     return AttendanceMapper.toDTO(updated);
 }
+    public Page<AttendanceDTO> findAttendanceByStudent(String cpf, Pageable pageable){
+        Page<AttendanceDTO> attendanceDTOs = attendanceRepository.findAttendanceByStudent(cpf, pageable)
+            .map(AttendanceMapper::toDTO);
+        return attendanceDTOs;
+    }
 }

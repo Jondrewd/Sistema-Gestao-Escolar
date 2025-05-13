@@ -145,4 +145,35 @@ public class AttendanceController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @Operation(
+        summary = "Buscar presença de aluno por CPF",
+        description = "Recupera as presenças de um estudante específico com base no seu CPF."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Estudante encontrado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Estudante não encontrado"),
+        @ApiResponse(responseCode = "400", description = "CPF inválido")
+    })
+    @GetMapping("/{cpf}/attendance")
+    public ResponseEntity<Page<AttendanceDTO>> findAttendancesByStudent(
+    @Parameter(description = "Número da página (0-based)", example = "0") 
+        @RequestParam(value = "page", defaultValue = "0") Integer page,
+        
+        @Parameter(description = "Quantidade de itens por página", example = "10") 
+        @RequestParam(value = "size", defaultValue = "12") Integer size,
+        
+        @Parameter(description = "Direção da ordenação (asc/desc)", example = "asc") 
+        @RequestParam(value = "direction", defaultValue = "asc") String direction,
+        
+        @Parameter(description = "Campo para ordenação (id, date)", example = "date") 
+        @RequestParam(value = "sort", defaultValue = "id") String sort,
+
+        @Parameter(description = "CPF do estudante (apenas números)", example = "12345678901") 
+        @PathVariable String cpf) {
+
+            Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+            return ResponseEntity.ok(service.findAttendanceByStudent(cpf, pageable));
+    }
 }
