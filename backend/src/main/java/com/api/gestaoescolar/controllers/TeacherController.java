@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.api.gestaoescolar.dtos.TeacherDTO;
 import com.api.gestaoescolar.dtos.UserDTO;
 import com.api.gestaoescolar.services.UserService;
 
@@ -44,7 +45,7 @@ public class TeacherController {
         @ApiResponse(responseCode = "400", description = "Parâmetros de paginação inválidos")
     })
     @GetMapping
-    public ResponseEntity<Page<UserDTO>> findAll(
+    public ResponseEntity<Page<TeacherDTO>> findAll(
             @Parameter(description = "Número da página (0-based)", example = "0") 
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             
@@ -63,20 +64,23 @@ public class TeacherController {
     }
 
     @Operation(
-        summary = "Buscar professor por CPF",
-        description = "Recupera os detalhes de um professor específico com base no seu CPF."
+        summary = "Buscar professores por especialidade",
+        description = "Recupera a lista de professores com base na sua especialidade."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Professor encontrado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Professor não encontrado"),
-        @ApiResponse(responseCode = "400", description = "CPF inválido")
+            @ApiResponse(responseCode = "200", description = "Professores encontrados com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Nenhum professor encontrado com a especialidade informada"),
+            @ApiResponse(responseCode = "400", description = "Especialidade inválida")
     })
-    @GetMapping("/{cpf}")
-    public ResponseEntity<UserDTO> findByCpf(
-            @Parameter(description = "CPF do professor (apenas números)", example = "98765432109") 
-            @PathVariable String cpf) {
-        return ResponseEntity.ok(service.findByCpf(cpf));
+    @GetMapping("/speciality/{speciality}")
+    public ResponseEntity<Page<TeacherDTO>> findBySpeciality(
+            @Parameter(description = "Especialidade do professor", example = "Matemática") 
+            @PathVariable String speciality,
+            Pageable pageable) {
+        Page<TeacherDTO> teachers = service.findBySpeciality(speciality, pageable);
+        return ResponseEntity.ok(teachers);
     }
+
 
     @Operation(
         summary = "Criar novo professor",
@@ -91,12 +95,12 @@ public class TeacherController {
         description = "Dados do novo professor",
         required = true,
         content = @Content(
-            schema = @Schema(implementation = UserDTO.class)
+            schema = @Schema(implementation = TeacherDTO.class)
         )
     )
     @PostMapping
-    public ResponseEntity<UserDTO> insert(@RequestBody UserDTO teacher) {
-        UserDTO createdTeacher = service.create(teacher);
+    public ResponseEntity<TeacherDTO> insert(@RequestBody UserDTO teacher) {
+        TeacherDTO createdTeacher = service.createTeacher(teacher);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{cpf}")
                 .buildAndExpand(createdTeacher.getCpf())
@@ -114,7 +118,7 @@ public class TeacherController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
     @PutMapping("/{cpf}")
-    public ResponseEntity<UserDTO> update(
+    public ResponseEntity<TeacherDTO> update(
             @Parameter(description = "CPF do professor a ser atualizado", example = "98765432109") 
             @PathVariable String cpf, 
             
@@ -122,7 +126,7 @@ public class TeacherController {
                 description = "Dados atualizados do professor",
                 required = true,
                 content = @Content(
-                    schema = @Schema(implementation = UserDTO.class)
+                    schema = @Schema(implementation = TeacherDTO.class)
                 )
             )
             @RequestBody UserDTO teacher) {

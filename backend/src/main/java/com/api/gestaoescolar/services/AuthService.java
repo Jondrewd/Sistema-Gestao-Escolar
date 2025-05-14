@@ -54,8 +54,10 @@ public class AuthService {
             Teacher teacher = new Teacher();
             teacher.setUsername(data.getUsername());
             teacher.setCpf(data.getCpf());
+            teacher.setFullName(data.getFullName());
             teacher.setEmail(data.getEmail());
             teacher.setPassword(config.passwordEncoder().encode(data.getPassword())); 
+            teacher.setSpeciality(data.getSpeciality());
             teacher.setRoles(Collections.singletonList(roles));
             newUser = teacher;
 
@@ -76,8 +78,10 @@ public class AuthService {
                 Student student = new Student();
                 student.setUsername(data.getUsername());
                 student.setCpf(data.getCpf());
+                student.setFullName(data.getFullName());
                 student.setEmail(data.getEmail());
                 student.setRoles(Collections.singletonList(roles));
+                student.setRegistrationNumber(data.getRegistrationNumber());
                 student.setPassword(config.passwordEncoder().encode(data.getPassword())); 
                 newUser = student;
             repository.save(newUser); 

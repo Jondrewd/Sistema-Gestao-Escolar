@@ -13,8 +13,12 @@ public class RegisterTeacherDTO {
     private final String userType = "TEACHER";
     
     @NotBlank(message = "O nome de usuário é obrigatório.")
-    @Size(min = 3, max = 30, message = "O nome de usuário deve ter entre 3 e 30 caracteres.")
+    @Size(min = 3, max = 15, message = "O nome de usuário deve ter entre 3 e 30 caracteres.")
     private String username;
+
+    @NotBlank(message = "O nome completo é obrigatório.")
+    @Size(min = 3, max = 30, message = "O nome completo deve ter entre 3 e 30 caracteres.")
+    private String fullName;
     
     @NotBlank(message = "O CPF é obrigatório.")
     @Pattern(regexp = "^\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}$", 
@@ -34,11 +38,15 @@ public class RegisterTeacherDTO {
     private String speciality;
 
     public RegisterTeacherDTO(
-            @NotBlank(message = "O nome de usuário é obrigatório.") @Size(min = 3, max = 30, message = "O nome de usuário deve ter entre 3 e 30 caracteres.") String username,
+            @NotBlank(message = "O nome de usuário é obrigatório.") @Size(min = 3, max = 15, message = "O nome de usuário deve ter entre 3 e 30 caracteres.") String username,
+            @NotBlank(message = "O nome completo é obrigatório.") @Size(min = 3, max = 30, message = "O nome completo deve ter entre 3 e 30 caracteres.") String fullName,
+            @NotBlank(message = "O CPF é obrigatório.") @Pattern(regexp = "^\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}$", message = "CPF deve seguir o padrão 000.000.000-00") String cpf,
             @NotBlank(message = "O email é obrigatório.") @Email(message = "O email deve ser válido.") String email,
             @NotBlank(message = "A senha é obrigatória.") @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.") String password,
             @NotBlank(message = "A especialidade é obrigatória.") @Size(max = 50, message = "A especialidade deve ter no máximo 50 caracteres.") String speciality) {
         this.username = username;
+        this.fullName = fullName;
+        this.cpf = cpf;
         this.email = email;
         this.password = password;
         this.speciality = speciality;
@@ -86,6 +94,14 @@ public class RegisterTeacherDTO {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
         

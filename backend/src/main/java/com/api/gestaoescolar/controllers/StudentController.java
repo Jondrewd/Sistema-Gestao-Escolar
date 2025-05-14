@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.api.gestaoescolar.dtos.StudentDTO;
 import com.api.gestaoescolar.dtos.UserDTO;
 import com.api.gestaoescolar.services.UserService;
 
@@ -44,7 +45,7 @@ public class StudentController {
         @ApiResponse(responseCode = "400", description = "Parâmetros de paginação inválidos")
     })
     @GetMapping
-    public ResponseEntity<Page<UserDTO>> findAll(
+    public ResponseEntity<Page<StudentDTO>> findAll(
             @Parameter(description = "Número da página (0-based)", example = "0") 
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             
@@ -64,18 +65,18 @@ public class StudentController {
 
     @Operation(
         summary = "Buscar estudante por CPF",
-        description = "Recupera os detalhes de um estudante específico com base no seu CPF."
+        description = "Recupera os detalhes de um estudante específico com base no seu Numero de registroero de registro."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Estudante encontrado com sucesso"),
         @ApiResponse(responseCode = "404", description = "Estudante não encontrado"),
-        @ApiResponse(responseCode = "400", description = "CPF inválido")
+        @ApiResponse(responseCode = "400", description = "Numero de registroero de registro inválido")
     })
-    @GetMapping("/{cpf}")
-    public ResponseEntity<UserDTO> findByCpf(
-            @Parameter(description = "CPF do estudante (apenas números)", example = "12345678901") 
-            @PathVariable String cpf) {
-        return ResponseEntity.ok(service.findByCpf(cpf));
+    @GetMapping("/{registrationNumber}")
+    public ResponseEntity<StudentDTO> findByCpf(
+            @Parameter(description = "Numero de registro do estudante (apenas números)", example = "12345678901") 
+            @PathVariable String registrationNumber) {
+        return ResponseEntity.ok(service.findByRegistrationNumber(registrationNumber));
     }
 
     @Operation(
@@ -91,12 +92,12 @@ public class StudentController {
         description = "Dados do novo estudante",
         required = true,
         content = @Content(
-            schema = @Schema(implementation = UserDTO.class)
+            schema = @Schema(implementation = StudentDTO.class)
         )
     )
     @PostMapping
-    public ResponseEntity<UserDTO> insert(@RequestBody UserDTO student) {
-        UserDTO createdUser = service.create(student);
+    public ResponseEntity<StudentDTO> insert(@RequestBody UserDTO student) {
+        StudentDTO createdUser = service.createStudent(student);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{cpf}")
                 .buildAndExpand(createdUser.getCpf())
@@ -114,7 +115,7 @@ public class StudentController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
     @PutMapping("/{cpf}")
-    public ResponseEntity<UserDTO> update(
+    public ResponseEntity<StudentDTO> update(
             @Parameter(description = "CPF do estudante a ser atualizado", example = "12345678901") 
             @PathVariable String cpf, 
             
@@ -122,7 +123,7 @@ public class StudentController {
                 description = "Dados atualizados do estudante",
                 required = true,
                 content = @Content(
-                    schema = @Schema(implementation = UserDTO.class)
+                    schema = @Schema(implementation = StudentDTO.class)
                 )
             )
             @RequestBody UserDTO student) {
@@ -145,4 +146,5 @@ public class StudentController {
         service.deleteByCpf(cpf);
         return ResponseEntity.noContent().build();
     }
+
 }

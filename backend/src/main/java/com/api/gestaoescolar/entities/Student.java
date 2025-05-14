@@ -13,7 +13,7 @@ import jakarta.persistence.OneToMany;
 @DiscriminatorValue("STUDENT")
 public class Student extends User {
 
-    private Long registrationNumber;
+    private String registrationNumber;
 
     @ManyToMany(mappedBy = "students")
     private List<Classes> Classes = new ArrayList<>();
@@ -25,17 +25,17 @@ public class Student extends User {
     private List<Attendance> attendances = new ArrayList<>();
 
 
-    public Student(Long id, String username, String cpf, String email, String password,
-            Instant createdAt, List<Roles> roles, Long registrationNumber, List<Classes> classes,
+    public Student(Long id, String username, String fullName, String cpf, String email, String password,
+            Instant createdAt, String registrationNumber, List<com.api.gestaoescolar.entities.Classes> classes,
             List<Evaluation> evaluations, List<Attendance> attendances) {
-        super(id, username, cpf, email, password, createdAt, roles);
+        super(id, username, fullName, cpf, email, password, createdAt);
         this.registrationNumber = registrationNumber;
         Classes = classes;
         this.evaluations = evaluations;
         this.attendances = attendances;
     }
 
-    public Student(Long registrationNumber, List<Classes> classes, List<Evaluation> evaluations,
+    public Student(String registrationNumber, List<Classes> classes, List<Evaluation> evaluations,
             List<Attendance> attendances) {
         this.registrationNumber = registrationNumber;
         Classes = classes;
@@ -47,11 +47,11 @@ public class Student extends User {
         super();
     }
 
-    public Long getRegistrationNumber() {
+    public String getRegistrationNumber() {
         return registrationNumber;
     }
 
-    public void setRegistrationNumber(Long registrationNumber) {
+    public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
 

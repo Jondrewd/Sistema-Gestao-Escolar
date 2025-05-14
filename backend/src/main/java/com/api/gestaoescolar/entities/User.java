@@ -29,6 +29,7 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    private String fullName;
     private String cpf;
     private String email;
     private String password;
@@ -51,15 +52,14 @@ public abstract class User {
     @ManyToMany
     private List<Roles> roles = new ArrayList<>();
 
-    public User(Long id, String username, String cpf, String email, String password, Instant createdAt,
-            List<Roles> roles) {
+    public User(Long id, String username, String fullName, String cpf, String email, String password, Instant createdAt) {
         this.id = id;
         this.username = username;
+        this.fullName = fullName;
         this.cpf = cpf;
         this.email = email;
         this.password = password;
         this.createdAt = createdAt;
-        this.roles = roles;
     }
 
     public User() {}
@@ -182,6 +182,14 @@ public abstract class User {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
     
 }

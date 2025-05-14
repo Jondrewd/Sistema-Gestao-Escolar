@@ -10,8 +10,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.api.gestaoescolar.dtos.StudentDTO;
+import com.api.gestaoescolar.dtos.TeacherDTO;
 import com.api.gestaoescolar.dtos.UserDTO;
-
+import com.api.gestaoescolar.entities.Student;
+import com.api.gestaoescolar.entities.Teacher;
 import com.api.gestaoescolar.entities.User;
 import com.api.gestaoescolar.exceptions.ResourceNotFoundException;
 import com.api.gestaoescolar.mappers.UserMapper;
@@ -82,54 +85,67 @@ public class UserService implements UserDetailsService {
 
     // Métodos para Students
     @Transactional(readOnly = true)
-    public Page<UserDTO> findAllStudents(Pageable pageable) {
+    public Page<StudentDTO> findAllStudents(Pageable pageable) {
         Page<User> students = userRepository.findAllByUserType("STUDENT", pageable);
-        return students.map(UserMapper::toDto);
+        return students.map(user -> UserMapper.toStudentDTO((Student) user));
     }
 
     @Transactional
-    public UserDTO createStudent(UserDTO studentDTO) {
+    public StudentDTO createStudent(UserDTO studentDTO) {
         studentDTO.setUserType("STUDENT");
         User student = UserMapper.toEntity(studentDTO);
         User savedStudent = userRepository.save(student);
-        return UserMapper.toDto(savedStudent);
+        return UserMapper.toStudentDTO((Student) savedStudent);
+    }
+    @Transactional
+    public StudentDTO findByRegistrationNumber(String registrationNumber) {
+        Student student = userRepository.findByRegistrationNumber(registrationNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com número de matrícula: " + registrationNumber));
+        
+        return UserMapper.toStudentDTO(student);
     }
 
     @Transactional
-    public UserDTO updateStudent(String cpf, UserDTO studentDTO) {
+    public StudentDTO updateStudent(String cpf, UserDTO studentDTO) {
         User existingStudent = userRepository.findByCpf(cpf)
             .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
 
         UserMapper.updateFromDto(studentDTO, existingStudent);
         User updatedStudent = userRepository.save(existingStudent);
-        return UserMapper.toDto(updatedStudent);
-}
+        return UserMapper.toStudentDTO((Student) updatedStudent);
+    }
+
 
     // Métodos para Teachers
     @Transactional(readOnly = true)
-    public Page<UserDTO> findAllTeachers(Pageable pageable) {
+    public Page<TeacherDTO> findAllTeachers(Pageable pageable) {
         Page<User> teachers = userRepository.findAllByUserType("TEACHER", pageable);
-        return teachers.map(UserMapper::toDto);
+        return teachers.map(user -> UserMapper.toTeacherDTO((Teacher) user));
+    }
+    @Transactional(readOnly = true)
+    public Page<TeacherDTO> findBySpeciality(String speciality, Pageable pageable) {
+        Page<Teacher> teachers = userRepository.findBySpecialityIgnoreCaseContaining(speciality, pageable);
+        return teachers.map(UserMapper::toTeacherDTO);
     }
 
     @Transactional
-    public UserDTO createTeacher(UserDTO teacherDTO) {
+    public TeacherDTO createTeacher(UserDTO teacherDTO) {
         teacherDTO.setUserType("TEACHER");
         User teacher = UserMapper.toEntity(teacherDTO);
         User savedTeacher = userRepository.save(teacher);
-        return UserMapper.toDto(savedTeacher);
+        return UserMapper.toTeacherDTO((Teacher) savedTeacher);
     }
 
     @Transactional
-    public UserDTO updateTeacher(String cpf, UserDTO teacherDTO) {
+    public TeacherDTO updateTeacher(String cpf, UserDTO teacherDTO) {
         User existingTeacher = userRepository.findByCpf(cpf)
             .orElseThrow(() -> new ResourceNotFoundException("Professor não encontrado com CPF: " + cpf));
 
         UserMapper.updateFromDto(teacherDTO, existingTeacher);
         User updatedTeacher = userRepository.save(existingTeacher);
-        return UserMapper.toDto(updatedTeacher);
-    }
 
+        return UserMapper.toTeacherDTO((Teacher) updatedTeacher);
+    }
 
     @Override
     @Transactional(readOnly = true)

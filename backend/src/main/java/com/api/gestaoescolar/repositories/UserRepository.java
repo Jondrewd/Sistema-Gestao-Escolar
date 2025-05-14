@@ -33,6 +33,9 @@ public interface UserRepository extends JpaRepository<User, Long>{
     @Query("SELECT u FROM User u WHERE u.cpf = :cpf")
     Optional<User> findByCpf(@Param("cpf") String cpf);
 
+    Optional<Student> findByRegistrationNumber(String registrationNumber);
+    Page<Teacher> findBySpecialityIgnoreCaseContaining(String speciality, Pageable pageable);
+
     boolean existsByUsername(String username);
     boolean existsByCpf(String cpf);
     boolean existsByEmail(String email);

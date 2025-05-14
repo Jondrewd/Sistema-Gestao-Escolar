@@ -17,16 +17,14 @@ public class Teacher extends User {
     @OneToMany(mappedBy = "teacher")
     private List<Classes> Classes = new ArrayList<>();
 
-
-    public Teacher(Long id, String username, String cpf, String email, String password,
-            Instant createdAt, List<Roles> roles, String speciality,
-            List<com.api.gestaoescolar.entities.Classes> classes) {
-        super(id, username, cpf, email, password, createdAt, roles);
+    public Teacher(Long id, String username, String fullName, String cpf, String email, String password,
+            Instant createdAt, String speciality, List<com.api.gestaoescolar.entities.Classes> classes) {
+        super(id, username, fullName, cpf, email, password, createdAt);
         this.speciality = speciality;
         Classes = classes;
     }
 
-    public Teacher(String speciality, List<com.api.gestaoescolar.entities.Classes> classes) {
+    public Teacher(String speciality, List<Classes> classes) {
         this.speciality = speciality;
         Classes = classes;
     }

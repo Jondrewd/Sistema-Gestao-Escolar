@@ -8,14 +8,14 @@ public class UserDTO {
     private String userType;
     private Long id;
     private String username;
+    private String fullName;
     private String cpf;
     private String email;
     private String password;
     private Instant createdAt;
-    private String schoolRole;
     
     /* Student */
-    private Long registrationNumber;
+    private String registrationNumber;
     private List<ClassesDTO> studentClasses = new ArrayList<>();
     private List<EvaluationDTO> evaluations = new ArrayList<>();
     private List<AttendanceDTO> attendances = new ArrayList<>();
@@ -26,17 +26,22 @@ public class UserDTO {
 
     public UserDTO() {}
 
-    public UserDTO(Instant createdAt, String cpf, String email, Long id, String password, Long registrationNumber, String schoolRole, String speciality, String userType, String username) {
-        this.createdAt = createdAt;
-        this.email = email;
-        this.id = id;
-        this.cpf = cpf;
-        this.password = password;
-        this.registrationNumber = registrationNumber;
-        this.schoolRole = schoolRole;
-        this.speciality = speciality;
-        this.userType = userType;
+    public UserDTO(String username, String fullName, String cpf, String email, String password,
+            Instant createdAt, String registrationNumber, List<ClassesDTO> studentClasses,
+            List<EvaluationDTO> evaluations, List<AttendanceDTO> attendances, String speciality,
+            List<ClassesDTO> teacherClasses) {
         this.username = username;
+        this.fullName = fullName;
+        this.cpf = cpf;
+        this.email = email;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.registrationNumber = registrationNumber;
+        this.studentClasses = studentClasses;
+        this.evaluations = evaluations;
+        this.attendances = attendances;
+        this.speciality = speciality;
+        this.teacherClasses = teacherClasses;
     }
 
     public String getUserType() {
@@ -95,19 +100,11 @@ public class UserDTO {
         this.createdAt = createdAt;
     }
 
-    public String getSchoolRole() {
-        return schoolRole;
-    }
-
-    public void setSchoolRole(String schoolRole) {
-        this.schoolRole = schoolRole;
-    }
-
-    public Long getRegistrationNumber() {
+    public String getRegistrationNumber() {
         return registrationNumber;
     }
 
-    public void setRegistrationNumber(Long registrationNumber) {
+    public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
 
@@ -150,6 +147,14 @@ public void setTeacherClasses(List<ClassesDTO> teacherClasses) {
 
     public List<ClassesDTO> getTeacherClasses() {
         return teacherClasses;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
 
