@@ -1,29 +1,48 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
+import api from '../../Service/Api';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [cpf, setCpf] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    
-    // Só para simular o login
-    setTimeout(() => {
-      if (email && password) {
-        console.log('Login realizado:', { email, password, rememberMe });
-      } else {
-        setError('Por favor, preencha todos os campos');
-      }
-      setIsLoading(false);
-    }, 1500);
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
+
+  try {
+    const response = await api.post('/auth/login', {
+      cpf,
+      password
+    });
+
+    const { acessToken, refreshToken } = response.data;
+
+    sessionStorage.setItem('cpf', cpf);
+    sessionStorage.setItem('acessToken', acessToken);
+    sessionStorage.setItem('refreshToken', refreshToken);
+
+    console.log('Login bem-sucedido');
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.error(err);
+    if (err.response && err.response.status === 401) {
+      setError("Cpf ou senha inválidos");
+    } else {
+      setError("Erro ao fazer login. Tente novamente.");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="login-container">
@@ -42,13 +61,13 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="email">E-mail</label>
+            <label htmlFor="cpf">Cpf</label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="seu@email.com"
+              type="text"
+              id="cpf"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              placeholder="Cpf"
               required
             />
           </div>
