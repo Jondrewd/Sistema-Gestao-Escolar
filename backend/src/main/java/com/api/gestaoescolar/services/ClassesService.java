@@ -21,66 +21,73 @@ import jakarta.persistence.EntityNotFoundException;
 @Transactional
 public class ClassesService {
 
-        private final ClassesRepository classesRepository;
-        private final UserRepository userRepository;
-        private final CourseRepository courseRepository;
-        private final AttendanceRepository attendanceRepository;
+    private final ClassesRepository classesRepository;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final AttendanceRepository attendanceRepository;
 
-        public ClassesService(ClassesRepository classesRepository,
-                                UserRepository userRepository,
-                                CourseRepository courseRepository,
-                                AttendanceRepository attendanceRepository) {
-                this.classesRepository = classesRepository;
-                this.userRepository = userRepository;
-                this.courseRepository = courseRepository;
-                this.attendanceRepository = attendanceRepository;
+    public ClassesService(ClassesRepository classesRepository,
+                          UserRepository userRepository,
+                          CourseRepository courseRepository,
+                          AttendanceRepository attendanceRepository) {
+        this.classesRepository = classesRepository;
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.attendanceRepository = attendanceRepository;
+    }
+
+    public ClassesDTO createClass(ClassesDTO classesDTO) {
+        Classes newClass = ClassesMapper.toEntity(classesDTO);
+
+        if (classesDTO.getTeacher() != null) {
+            Teacher teacher = userRepository.findTeacherByCpf(classesDTO.getTeacher())
+                    .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado ou não é do tipo TEACHER: " + classesDTO.getTeacher()));
+            newClass.setTeacher(teacher);
         }
 
-        public ClassesDTO createClass(ClassesDTO classesDTO) {
-                Classes newClass = ClassesMapper.toEntity(classesDTO);
-                
-                Teacher teacher = userRepository.findTeacherByUsername(classesDTO.getTeacher())
-                        .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado ou não é do tipo TEACHER: " + classesDTO.getTeacher()));
-                
-                Course course = courseRepository.findById(classesDTO.getCourse())
-                        .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com ID: " + classesDTO.getCourse()));
-                
-                List<Student> students = userRepository.findStudentsByUsernames(classesDTO.getStudents())
-                        .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
-                
-                newClass.setTeacher(teacher);
-                newClass.setCourse(course);
-                newClass.setStudents(students);
-                
-                Classes savedClass = classesRepository.save(newClass);
-                
-                createDefaultAttendances(savedClass, students);
-                
-                return ClassesMapper.toDto(savedClass);
+        Course course = courseRepository.findById(classesDTO.getCourse())
+                .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com ID: " + classesDTO.getCourse()));
+
+        newClass.setCourse(course);
+
+        if (classesDTO.getStudents() != null && !classesDTO.getStudents().isEmpty()) {
+            List<Student> students = userRepository.findStudentsByCpf(classesDTO.getStudents())
+                    .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
+            newClass.setStudents(students);
         }
 
-        public ClassesDTO getClassById(Long id) {
-                Classes classes = classesRepository.findByIdWithRelations(id)
-                        .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
-                return ClassesMapper.toDto(classes);
+        Classes savedClass = classesRepository.save(newClass);
+
+        if (newClass.getStudents() != null && !newClass.getStudents().isEmpty()) {
+            createDefaultAttendances(savedClass, newClass.getStudents());
         }
 
-        public Page<ClassesDTO> getAllClasses(Pageable pageable) {
-                return classesRepository.findAllWithRelations(pageable)
-                        .map(ClassesMapper::toDto);
-        }
-        @Transactional
-        public ClassesDTO addStudentsToClass(Long classId, List<String> studentUsernames) {
+        return ClassesMapper.toDto(savedClass);
+    }
+
+    public ClassesDTO getClassById(Long id) {
+        Classes classes = classesRepository.findByIdWithRelations(id)
+                .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
+        return ClassesMapper.toDto(classes);
+    }
+
+    public Page<ClassesDTO> getAllClasses(Pageable pageable) {
+        return classesRepository.findAllWithRelations(pageable)
+                .map(ClassesMapper::toDto);
+    }
+
+    @Transactional
+    public ClassesDTO addStudentsToClass(Long classId, List<String> studentCpfs) {
         Classes existingClass = classesRepository.findById(classId)
                 .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + classId));
 
-        List<Student> studentsToAdd = userRepository.findStudentsByUsernames(studentUsernames)
+        List<Student> studentsToAdd = userRepository.findStudentsByCpf(studentCpfs)
                 .orElseThrow(() -> new ResourceNotFoundException("Um ou mais alunos não encontrados"));
 
         studentsToAdd.forEach(student -> {
-                if (!existingClass.getStudents().contains(student)) {
+            if (!existingClass.getStudents().contains(student)) {
                 existingClass.getStudents().add(student);
-                }
+            }
         });
 
         Classes updatedClass = classesRepository.save(existingClass);
@@ -88,37 +95,37 @@ public class ClassesService {
         createDefaultAttendances(updatedClass, studentsToAdd);
 
         return ClassesMapper.toDto(updatedClass);
-        }
-
+    }
 
     public ClassesDTO updateClass(Long id, ClassesDTO classesDTO) {
         Classes existingClass = classesRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
-        
+
         existingClass.setName(classesDTO.getName());
-        
-        if (!existingClass.getTeacher().getUsername().equals(classesDTO.getTeacher())) {
-            Teacher newTeacher = userRepository.findTeacherByUsername(classesDTO.getTeacher())
+
+        if (classesDTO.getTeacher() != null &&
+            (existingClass.getTeacher() == null || !existingClass.getTeacher().getCpf().equals(classesDTO.getTeacher()))) {
+            Teacher newTeacher = userRepository.findTeacherByCpf(classesDTO.getTeacher())
                     .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado ou não é do tipo TEACHER"));
             existingClass.setTeacher(newTeacher);
         }
-        
+
         if (!existingClass.getCourse().getId().equals(classesDTO.getCourse())) {
             Course newCourse = courseRepository.findById(classesDTO.getCourse())
                     .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
             existingClass.setCourse(newCourse);
         }
-        
-        List<String> currentStudentUsernames = existingClass.getStudents().stream()
-                .map(Student::getUsername)
+
+        List<String> currentStudentCpfs = existingClass.getStudents().stream()
+                .map(Student::getCpf)
                 .collect(Collectors.toList());
-        
-        if (!currentStudentUsernames.equals(classesDTO.getStudents())) {
-            List<Student> newStudents = userRepository.findStudentsByUsernames(classesDTO.getStudents())
+
+        if (!currentStudentCpfs.equals(classesDTO.getStudents())) {
+            List<Student> newStudents = userRepository.findStudentsByCpf(classesDTO.getStudents())
                     .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
             existingClass.setStudents(newStudents);
         }
-        
+
         Classes updatedClass = classesRepository.save(existingClass);
         return ClassesMapper.toDto(updatedClass);
     }
@@ -126,7 +133,7 @@ public class ClassesService {
     public void deleteClass(Long id) {
         Classes classes = classesRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
-        
+
         attendanceRepository.deleteByClassesId(id);
         classesRepository.delete(classes);
     }
@@ -142,7 +149,7 @@ public class ClassesService {
                     return attendance;
                 })
                 .collect(Collectors.toList());
-        
+
         attendanceRepository.saveAll(attendances);
     }
 }

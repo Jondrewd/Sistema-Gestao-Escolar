@@ -21,7 +21,7 @@ public class AttendanceMapper {
         dto.setPresent(attendance.getPresent());
 
         if (attendance.getStudent() != null) {
-            dto.setStudent(attendance.getStudent().getUsername()); 
+            dto.setStudent(attendance.getStudent().getCpf());
         }
 
         if (attendance.getClasses() != null) {

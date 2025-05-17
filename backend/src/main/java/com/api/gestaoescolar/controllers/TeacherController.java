@@ -55,8 +55,8 @@ public class TeacherController {
             @Parameter(description = "Direção da ordenação (asc/desc)", example = "asc") 
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             
-            @Parameter(description = "Campo para ordenação", example = "username") 
-            @RequestParam(value = "sort", defaultValue = "username") String sort) {
+            @Parameter(description = "Campo para ordenação", example = "cpf") 
+            @RequestParam(value = "sort", defaultValue = "cpf") String sort) {
         
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
@@ -80,7 +80,21 @@ public class TeacherController {
         Page<TeacherDTO> teachers = service.findBySpeciality(speciality, pageable);
         return ResponseEntity.ok(teachers);
     }
-
+    @Operation(
+        summary = "Buscar professor por Cpf",
+        description = "Recupera os detalhes de um professor específico com base no seu Cpf."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Estudante encontrado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Estudante não encontrado"),
+        @ApiResponse(responseCode = "400", description = "Cpf inválido")
+    })
+    @GetMapping("/{cpf}")
+    public ResponseEntity<TeacherDTO> findByCpf(
+            @Parameter(description = "Cpf do professor (apenas números)", example = "123.456.789-01") 
+            @PathVariable String cpf) {
+        return ResponseEntity.ok(service.findTeacherByCpf(cpf));
+    }
 
     @Operation(
         summary = "Criar novo professor",

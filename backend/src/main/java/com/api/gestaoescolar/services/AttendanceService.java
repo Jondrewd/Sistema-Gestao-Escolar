@@ -65,7 +65,7 @@ public AttendanceDTO update(Long id, AttendanceDTO dto) {
     AttendanceMapper.updateFromDto(dto, entity);
     
     if (dto.getStudent() != null) {
-        Student student = userRepository.findStudentByUsername(dto.getStudent())
+        Student student = userRepository.findStudentByCpf(dto.getStudent())
             .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado"));
         entity.setStudent(student);
     }
@@ -79,8 +79,8 @@ public AttendanceDTO update(Long id, AttendanceDTO dto) {
     Attendance updated = attendanceRepository.save(entity);
     return AttendanceMapper.toDTO(updated);
 }
-    public Page<AttendanceDTO> findAttendanceByStudent(String cpf, Pageable pageable){
-        Page<AttendanceDTO> attendanceDTOs = attendanceRepository.findAttendanceByStudent(cpf, pageable)
+    public Page<AttendanceDTO> findByStudentCpf(String cpf, Pageable pageable){
+        Page<AttendanceDTO> attendanceDTOs = attendanceRepository.findByStudentCpf(cpf, pageable)
             .map(AttendanceMapper::toDTO);
         return attendanceDTOs;
     }

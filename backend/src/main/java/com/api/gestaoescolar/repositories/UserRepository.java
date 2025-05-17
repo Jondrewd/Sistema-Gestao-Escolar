@@ -15,28 +15,23 @@ import com.api.gestaoescolar.entities.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 
-    @Query("SELECT u FROM User u WHERE u.username = :username")
-    User findByUsername(@Param("username") String username);
-    
-    @Query("SELECT u FROM Teacher u WHERE u.username = :username")
-    Optional<Teacher> findTeacherByUsername(@Param("username") String username);
-
-    @Query("SELECT s FROM Student s WHERE s.username IN :usernames")
-    Optional<List<Student>> findStudentsByUsernames(@Param("usernames") List<String> usernames);
-
-    @Query("SELECT s FROM Student s WHERE s.username = :username")
-    Optional<Student> findStudentByUsername(@Param("username") String username);
-
     @Query(value = "SELECT * FROM users WHERE user_type = :userType", nativeQuery = true)
     Page<User> findAllByUserType(@Param("userType") String userType, Pageable pageable);
 
-    @Query("SELECT u FROM User u WHERE u.cpf = :cpf")
+    @Query("SELECT s FROM Student s WHERE s.cpf IN :cpfs")
+    Optional<List<Student>> findStudentsByCpf(@Param("cpfs") List<String> cpfs);
+
     Optional<User> findByCpf(@Param("cpf") String cpf);
+
+    @Query(value = "SELECT * FROM users WHERE cpf = :cpf AND user_type = 'STUDENT'", nativeQuery = true)
+    Optional<Student> findStudentByCpf(@Param("cpf") String cpf);
+
+    @Query(value = "SELECT * FROM users WHERE cpf = :cpf AND user_type = 'TEACHER'", nativeQuery = true)
+    Optional<Teacher> findTeacherByCpf(@Param("cpf") String cpf);
 
     Optional<Student> findByRegistrationNumber(String registrationNumber);
     Page<Teacher> findBySpecialityIgnoreCaseContaining(String speciality, Pageable pageable);
 
-    boolean existsByUsername(String username);
     boolean existsByCpf(String cpf);
     boolean existsByEmail(String email);
 }

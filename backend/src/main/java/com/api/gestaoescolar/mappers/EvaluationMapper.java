@@ -22,7 +22,7 @@ public class EvaluationMapper {
         dto.setScore(evaluation.getScore());
 
         if (evaluation.getStudent() != null) {
-            dto.setStudent(evaluation.getStudent().getUsername());
+            dto.setStudent(evaluation.getStudent().getCpf());
         }
 
         if (evaluation.getCourse() != null) {

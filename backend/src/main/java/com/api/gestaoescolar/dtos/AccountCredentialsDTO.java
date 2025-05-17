@@ -6,20 +6,20 @@ public class AccountCredentialsDTO implements Serializable {
     
     private static final long serialVersionUID =1L;
 
-    private String username;
+    private String cpf;
     private String password;
     
-    public AccountCredentialsDTO(String username, String password) {
-        this.username = username;
+    public AccountCredentialsDTO(String cpf, String password) {
+        this.cpf = cpf;
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getPassword() {
@@ -34,7 +34,7 @@ public class AccountCredentialsDTO implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         return result;
     }
@@ -48,10 +48,10 @@ public class AccountCredentialsDTO implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         AccountCredentialsDTO other = (AccountCredentialsDTO) obj;
-        if (username == null) {
-            if (other.username != null)
+        if (cpf == null) {
+            if (other.cpf != null)
                 return false;
-        } else if (!username.equals(other.username))
+        } else if (!cpf.equals(other.cpf))
             return false;
         if (password == null) {
             if (other.password != null)

@@ -174,6 +174,6 @@ public class AttendanceController {
 
             Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
             Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
-            return ResponseEntity.ok(service.findAttendanceByStudent(cpf, pageable));
+            return ResponseEntity.ok(service.findByStudentCpf(cpf, pageable));
     }
 }

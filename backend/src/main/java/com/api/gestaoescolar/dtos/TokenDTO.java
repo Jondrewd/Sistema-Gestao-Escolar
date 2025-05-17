@@ -7,7 +7,8 @@ public class TokenDTO implements Serializable {
     
     private static final long serialVersionUID =1L;
 
-    private String username;
+    private String cpf;
+    private String userType;
     private Boolean authenticateBoolean;
     private Date created;
     private Date expiration;
@@ -16,19 +17,28 @@ public class TokenDTO implements Serializable {
     
     public TokenDTO(){}
     
-    public TokenDTO(String username, Boolean authenticateBoolean, Date created, Date expiration, String acessToken,String refreshToken) {
-        this.username = username;
+    public TokenDTO(String cpf, Boolean authenticateBoolean, Date created, Date expiration, String acessToken,String refreshToken) {
+        this.cpf = cpf;
         this.authenticateBoolean = authenticateBoolean;
         this.created = created;
         this.expiration = expiration;
         this.acessToken = acessToken;
         this.refreshToken = refreshToken;
     }
-    public String getUsername() {
-        return username;
+    
+    public String getUserType() {
+        return userType;
     }
-    public void setUsername(String username) {
-        this.username = username;
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
     public Boolean getAuthenticateBoolean() {
         return authenticateBoolean;
@@ -64,7 +74,7 @@ public class TokenDTO implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
         result = prime * result + ((authenticateBoolean == null) ? 0 : authenticateBoolean.hashCode());
         result = prime * result + ((created == null) ? 0 : created.hashCode());
         result = prime * result + ((expiration == null) ? 0 : expiration.hashCode());
@@ -81,10 +91,10 @@ public class TokenDTO implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         TokenDTO other = (TokenDTO) obj;
-        if (username == null) {
-            if (other.username != null)
+        if (cpf == null) {
+            if (other.cpf != null)
                 return false;
-        } else if (!username.equals(other.username))
+        } else if (!cpf.equals(other.cpf))
             return false;
         if (authenticateBoolean == null) {
             if (other.authenticateBoolean != null)

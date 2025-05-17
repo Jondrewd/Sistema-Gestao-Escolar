@@ -72,15 +72,15 @@ public class UserService implements UserDetailsService {
     }
     @Transactional(readOnly = true)
     public UserDTO findByCpf(String cpf) {
-        User student = userRepository.findByCpf(cpf)
-            .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
-        return UserMapper.toDto(student);
+        User user = userRepository.findByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado com CPF: " + cpf));
+        return UserMapper.toDto(user);
     }
     @Transactional
     public void deleteByCpf(String cpf) {
-        User student = userRepository.findByCpf(cpf)
+        User user = userRepository.findByCpf(cpf)
             .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
-        userRepository.delete(student);
+        userRepository.delete(user);
     }
 
     // Métodos para Students
@@ -88,6 +88,13 @@ public class UserService implements UserDetailsService {
     public Page<StudentDTO> findAllStudents(Pageable pageable) {
         Page<User> students = userRepository.findAllByUserType("STUDENT", pageable);
         return students.map(user -> UserMapper.toStudentDTO((Student) user));
+    }
+
+    @Transactional(readOnly = true)
+    public StudentDTO findStudentByCpf(String cpf) {
+        Student user = userRepository.findStudentByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado com CPF: " + cpf));
+        return UserMapper.toStudentDTO(user);
     }
 
     @Transactional
@@ -122,6 +129,14 @@ public class UserService implements UserDetailsService {
         Page<User> teachers = userRepository.findAllByUserType("TEACHER", pageable);
         return teachers.map(user -> UserMapper.toTeacherDTO((Teacher) user));
     }
+
+    @Transactional(readOnly = true)
+    public TeacherDTO findTeacherByCpf(String cpf) {
+        Teacher user = userRepository.findTeacherByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado com CPF: " + cpf));
+        return UserMapper.toTeacherDTO(user);
+    }
+    
     @Transactional(readOnly = true)
     public Page<TeacherDTO> findBySpeciality(String speciality, Pageable pageable) {
         Page<Teacher> teachers = userRepository.findBySpecialityIgnoreCaseContaining(speciality, pageable);
@@ -149,19 +164,21 @@ public class UserService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String cpf) throws UsernameNotFoundException {
+        User user = userRepository.findByCpf(cpf)
+            .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
 
         List<GrantedAuthority> authorities = user.getRoles().stream()
             .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
             .collect(Collectors.toList());
 
         return new org.springframework.security.core.userdetails.User(
-            user.getUsername(),
+            user.getCpf(),
             user.getPassword(),
             authorities
         );
     }
+
 
     @Transactional(readOnly = true)
     public boolean existsByCpf(String cpf) {

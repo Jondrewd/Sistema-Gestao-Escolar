@@ -11,7 +11,6 @@ import com.api.gestaoescolar.entities.Attendance;
 
 import jakarta.transaction.Transactional;
 
-
 public interface AttendanceRepository extends JpaRepository<Attendance, Long>{
 
     @Transactional
@@ -23,10 +22,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>{
     @Modifying
     void deleteAllByClassesId(Long classesId); 
 
-    @Query("SELECT new com.api.gestaoescolar.dtos.AttendanceDTO(a.id, a.date, a.status, a.className) " +
-       "FROM Attendance a " +
-       "JOIN a.student s " +
-       "WHERE s.cpf = :cpf")
-    Page<Attendance> findAttendanceByStudent(@Param("cpf") String cpf, Pageable pageable);
+
+    Page<Attendance> findByStudentCpf(String cpf, Pageable pageable);
+
 
 }

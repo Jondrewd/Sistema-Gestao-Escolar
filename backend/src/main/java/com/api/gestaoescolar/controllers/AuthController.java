@@ -50,7 +50,7 @@ public class AuthController {
     @Operation(summary = "Realiza login de um usuário")
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> login(@RequestBody AccountCredentialsDTO data) {
-        if (data == null || data.getUsername() == null || data.getPassword() == null) {
+        if (data == null || data.getCpf() == null || data.getPassword() == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -59,27 +59,27 @@ public class AuthController {
     }
 
     @Operation(summary = "Atualiza o Token do usuario.")
-    @PutMapping(value = "/refresh/{username}")
-    public ResponseEntity refreshToken(@PathVariable("username") String username,
+    @PutMapping(value = "/refresh/{cpf}")
+    public ResponseEntity refreshToken(@PathVariable("cpf") String cpf,
     @RequestHeader("Authorization") String refreshToken){
-        if (checkParamIsNotNull(username, refreshToken)) 
+        if (checkParamIsNotNull(cpf, refreshToken)) 
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request.");
-        var token = authService.refreshToken(username, refreshToken);
+        var token = authService.refreshToken(cpf, refreshToken);
         if (token == null) 
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request.");
         return token;
     }
 
-    private boolean checkParamIsNotNull(String username, String refreshToken){
-        return refreshToken == null || refreshToken.isBlank() || username == null || username.isBlank();
+    private boolean checkParamIsNotNull(String cpf, String refreshToken){
+        return refreshToken == null || refreshToken.isBlank() || cpf == null || cpf.isBlank();
     }
     
     private boolean checkParamIsNotNull(RegisterStudentDTO data){
-        return data == null || data.getUsername() == null || data.getUsername().isBlank() ||
+        return data == null || data.getCpf() == null || data.getCpf().isBlank() ||
         data.getPassword() == null || data.getPassword().isBlank();
     }
     private boolean checkParamIsNotNull(RegisterTeacherDTO data){
-        return data == null || data.getUsername() == null || data.getUsername().isBlank() ||
+        return data == null || data.getCpf() == null || data.getCpf().isBlank() ||
         data.getPassword() == null || data.getPassword().isBlank();
     }
 }

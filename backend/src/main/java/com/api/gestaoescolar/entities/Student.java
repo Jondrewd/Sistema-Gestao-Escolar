@@ -25,10 +25,10 @@ public class Student extends User {
     private List<Attendance> attendances = new ArrayList<>();
 
 
-    public Student(Long id, String username, String fullName, String cpf, String email, String password,
+    public Student(Long id, String fullName, String cpf, String email, String password,
             Instant createdAt, String registrationNumber, List<com.api.gestaoescolar.entities.Classes> classes,
             List<Evaluation> evaluations, List<Attendance> attendances) {
-        super(id, username, fullName, cpf, email, password, createdAt);
+        super(id, fullName, cpf, email, password, createdAt);
         this.registrationNumber = registrationNumber;
         Classes = classes;
         this.evaluations = evaluations;

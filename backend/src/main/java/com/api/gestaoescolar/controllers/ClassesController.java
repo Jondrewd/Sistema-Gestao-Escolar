@@ -168,17 +168,17 @@ public class ClassesController {
             @PathVariable Long id,
             
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                description = "Lista de usernames dos alunos a serem adicionados",
+                description = "Lista de cpfs dos alunos a serem adicionados",
                 required = true 
             )
-            @RequestBody List<String> studentUsernames) {
-        ClassesDTO updated = classesService.addStudentsToClass(id, studentUsernames);
+            @RequestBody List<String> studentCpfs) {
+        ClassesDTO updated = classesService.addStudentsToClass(id, studentCpfs);
         return ResponseEntity.ok(updated);
     }
 
     @Operation(
         summary = "Listar alunos da turma",
-        description = "Retorna a lista de usernames dos alunos matriculados em uma turma"
+        description = "Retorna a lista de Cpfs dos alunos matriculados em uma turma"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de alunos retornada com sucesso"),

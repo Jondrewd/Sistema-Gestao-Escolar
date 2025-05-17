@@ -55,8 +55,8 @@ public class StudentController {
             @Parameter(description = "Direção da ordenação (asc/desc)", example = "asc") 
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             
-            @Parameter(description = "Campo para ordenação", example = "username") 
-            @RequestParam(value = "sort", defaultValue = "username") String sort) {
+            @Parameter(description = "Campo para ordenação", example = "cpf") 
+            @RequestParam(value = "sort", defaultValue = "cpf") String sort) {
         
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
@@ -64,16 +64,32 @@ public class StudentController {
     }
 
     @Operation(
-        summary = "Buscar estudante por CPF",
-        description = "Recupera os detalhes de um estudante específico com base no seu Numero de registroero de registro."
+        summary = "Buscar estudante por Cpf",
+        description = "Recupera os detalhes de um estudante específico com base no seu Cpf."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Estudante encontrado com sucesso"),
         @ApiResponse(responseCode = "404", description = "Estudante não encontrado"),
-        @ApiResponse(responseCode = "400", description = "Numero de registroero de registro inválido")
+        @ApiResponse(responseCode = "400", description = "Cpf inválido")
     })
-    @GetMapping("/{registrationNumber}")
+    @GetMapping("/{cpf}")
     public ResponseEntity<StudentDTO> findByCpf(
+            @Parameter(description = "Cpf do estudante (apenas números)", example = "123.456.789-01") 
+            @PathVariable String cpf) {
+        return ResponseEntity.ok(service.findStudentByCpf(cpf));
+    }
+
+    @Operation(
+        summary = "Buscar estudante por Numero de registro",
+        description = "Recupera os detalhes de um estudante específico com base no Numero de registro."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Estudante encontrado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Estudante não encontrado"),
+        @ApiResponse(responseCode = "400", description = "Numero de registro inválido")
+    })
+    @GetMapping("/rn/{registrationNumber}")
+    public ResponseEntity<StudentDTO> findByRegisterNumber(
             @Parameter(description = "Numero de registro do estudante (apenas números)", example = "12345678901") 
             @PathVariable String registrationNumber) {
         return ResponseEntity.ok(service.findByRegistrationNumber(registrationNumber));

@@ -17,9 +17,9 @@ public class Teacher extends User {
     @OneToMany(mappedBy = "teacher")
     private List<Classes> Classes = new ArrayList<>();
 
-    public Teacher(Long id, String username, String fullName, String cpf, String email, String password,
+    public Teacher(Long id, String fullName, String cpf, String email, String password,
             Instant createdAt, String speciality, List<com.api.gestaoescolar.entities.Classes> classes) {
-        super(id, username, fullName, cpf, email, password, createdAt);
+        super(id, fullName, cpf, email, password, createdAt);
         this.speciality = speciality;
         Classes = classes;
     }

@@ -18,7 +18,6 @@ public class UserMapper {
 
         UserDTO userDto = new UserDTO();
         userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
         userDto.setCpf(user.getCpf());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
@@ -64,7 +63,6 @@ public class UserMapper {
         }
 
         user.setId(userDto.getId());
-        user.setUsername(userDto.getUsername());
         user.setCpf(userDto.getCpf());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
@@ -79,9 +77,6 @@ public class UserMapper {
             return;
         }
 
-        if (userDto.getUsername() != null) {
-            user.setUsername(userDto.getUsername());
-        }
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
         }
@@ -108,7 +103,6 @@ public class UserMapper {
 
         StudentDTO dto = new StudentDTO();
         dto.setId(student.getId());
-        dto.setUsername(student.getUsername());
         dto.setCpf(student.getCpf());
         dto.setEmail(student.getEmail());
         dto.setCreatedAt(student.getCreatedAt());
@@ -126,7 +120,6 @@ public class UserMapper {
 
         TeacherDTO dto = new TeacherDTO();
         dto.setId(teacher.getId());
-        dto.setUsername(teacher.getUsername());
         dto.setCpf(teacher.getCpf());
         dto.setEmail(teacher.getEmail());
         dto.setCreatedAt(teacher.getCreatedAt());

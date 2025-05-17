@@ -1,23 +1,23 @@
 package com.api.gestaoescolar.dtos;
 
 public class RegisterDTO {
-    private String username;
+    private String cpf;
     private String email;
     private String password;
     private String userType;
 
     public RegisterDTO() {}
-    public RegisterDTO(String username, String email, String password, String userType) {
-        this.username = username;
+    public RegisterDTO(String cpf, String email, String password, String userType) {
+        this.cpf = cpf;
         this.email = email;
         this.password = password;
         this.userType = userType;
     }
-    public String getUsername() {
-        return username;
+    public String getCpf() {
+        return cpf;
     }
-    public void setUsername(String username) {
-        this.username = username;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
     public String getEmail() {
         return email;

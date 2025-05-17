@@ -7,7 +7,6 @@ import java.util.List;
 public class UserDTO {
     private String userType;
     private Long id;
-    private String username;
     private String fullName;
     private String cpf;
     private String email;
@@ -26,11 +25,10 @@ public class UserDTO {
 
     public UserDTO() {}
 
-    public UserDTO(String username, String fullName, String cpf, String email, String password,
+    public UserDTO(String fullName, String cpf, String email, String password,
             Instant createdAt, String registrationNumber, List<ClassesDTO> studentClasses,
             List<EvaluationDTO> evaluations, List<AttendanceDTO> attendances, String speciality,
             List<ClassesDTO> teacherClasses) {
-        this.username = username;
         this.fullName = fullName;
         this.cpf = cpf;
         this.email = email;
@@ -66,14 +64,6 @@ public class UserDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {

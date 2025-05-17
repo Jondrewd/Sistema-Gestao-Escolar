@@ -35,7 +35,6 @@ public class CourseMapper {
         if (courseDto == null) {
             return null;
         }
-
         Course course = new Course();
         course.setId(courseDto.getId());
         course.setName(courseDto.getName());

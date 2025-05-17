@@ -48,7 +48,7 @@ public class EvaluationService {
     public EvaluationDTO create(EvaluationDTO evaluationDTO) {
         Evaluation evaluation = EvaluationMapper.toEntity(evaluationDTO);
 
-        Student student = userRepository.findStudentByUsername(evaluationDTO.getStudent())
+        Student student = (Student) userRepository.findByCpf(evaluationDTO.getStudent())
             .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado: " + evaluationDTO.getStudent()));
         
         Course course = courseRepository.findById(evaluationDTO.getCourse().getId())
@@ -74,8 +74,8 @@ public class EvaluationService {
         }
 
         if (evaluationDTO.getStudent() != null && 
-            !evaluationDTO.getStudent().equals(existingEvaluation.getStudent().getUsername())) {
-            Student student = userRepository.findStudentByUsername(evaluationDTO.getStudent())
+            !evaluationDTO.getStudent().equals(existingEvaluation.getStudent().getCpf())) {
+            Student student = (Student) userRepository.findByCpf(evaluationDTO.getStudent())
                 .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado: " + evaluationDTO.getStudent()));
             existingEvaluation.setStudent(student);
         }

@@ -45,14 +45,13 @@ public class AuthService {
     private SecurityConfig config;
 
    public ResponseEntity<String> registerTeacher(RegisterTeacherDTO data) {
-    if (checkUsername(data.getUsername())) {
+    if (checkCpf(data.getCpf())) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body("Já existe um usuário cadastrado com esse nome de usuário.");
     }
     User newUser;
     Roles roles = roleRepository.findByName("ROLE_USER").get();
             Teacher teacher = new Teacher();
-            teacher.setUsername(data.getUsername());
             teacher.setCpf(data.getCpf());
             teacher.setFullName(data.getFullName());
             teacher.setEmail(data.getEmail());
@@ -68,15 +67,13 @@ public class AuthService {
 }
 
     public ResponseEntity<String> registerStudent(RegisterStudentDTO data) {
-        if (checkUsername(data.getUsername())) {
+        if (checkCpf(data.getCpf())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Já existe um usuário cadastrado com esse nome de usuário.");
+                    .body("Já existe um usuário cadastrado com esse nome de CPF.");
         }
-
         User newUser;
         Roles roles = roleRepository.findByName("ROLE_USER").get();
                 Student student = new Student();
-                student.setUsername(data.getUsername());
                 student.setCpf(data.getCpf());
                 student.setFullName(data.getFullName());
                 student.setEmail(data.getEmail());
@@ -84,37 +81,38 @@ public class AuthService {
                 student.setRegistrationNumber(data.getRegistrationNumber());
                 student.setPassword(config.passwordEncoder().encode(data.getPassword())); 
                 newUser = student;
-            repository.save(newUser); 
-
+        repository.save(newUser); 
+        System.out.println(newUser);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Usuário registrado com sucesso.");
     }
 
     public ResponseEntity<TokenDTO> signin(AccountCredentialsDTO data) {
         try {
-            String username = data.getUsername();
+            String cpf = data.getCpf();
             String password = data.getPassword();
 
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(cpf, password));
 
-            var user = repository.findByUsername(username);
-
+            var user = repository.findByCpf(cpf);
             if (user == null) {
-                throw new UsernameNotFoundException("Username não encontrado.");
+                throw new UsernameNotFoundException("Cpf não encontrado.");
             }
+            String userType = isTeacherByCpf(cpf) ? "TEACHER" : "STUDENT";
 
-            TokenDTO tokenResponse = tokenProvider.createAcessToken(username, user.getRoleNames());
+            TokenDTO tokenResponse = tokenProvider.createAcessToken(cpf, user.get().getRoleNames());
+            tokenResponse.setUserType(userType);
             return ResponseEntity.ok(tokenResponse);
             
         } catch (UsernameNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            throw new BadCredentialsException("Username e/ou senha inválidos.");
+            throw new BadCredentialsException("Cpf e/ou senha inválidos.");
         }
     }
 
-    public ResponseEntity<TokenDTO> refreshToken(String username, String refreshToken) {
-        var user = repository.findByUsername(username);
+    public ResponseEntity<TokenDTO> refreshToken(String cpf, String refreshToken) {
+        var user = repository.findByCpf(cpf);
         if (user == null) {
             throw new UsernameNotFoundException("Username não encontrado.");
         }
@@ -123,7 +121,12 @@ public class AuthService {
     }
     
 
-    private boolean checkUsername(String name){
-        return repository.findByUsername(name) != null;
+    private boolean checkCpf(String cpf){
+        return repository.existsByCpf(cpf);
     }
+
+    private boolean isTeacherByCpf(String cpf) {
+    return repository.findTeacherByCpf(cpf).isPresent();
+}
+
 }

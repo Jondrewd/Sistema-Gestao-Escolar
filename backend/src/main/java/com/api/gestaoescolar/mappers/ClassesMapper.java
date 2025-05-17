@@ -22,12 +22,12 @@ public class ClassesMapper {
         dto.setName(classes.getName());
         dto.setCourse(classes.getCourse().getId());
         if (classes.getTeacher() != null) {
-            dto.setTeacher(classes.getTeacher().getUsername());
+            dto.setTeacher(classes.getTeacher().getCpf());
         }
 
         if (classes.getStudents() != null) {
             dto.setStudents(classes.getStudents().stream()
-                    .map(Student::getUsername)
+                    .map(Student::getCpf)
                     .collect(Collectors.toList()));
         } else {
             dto.setStudents(Collections.emptyList());
