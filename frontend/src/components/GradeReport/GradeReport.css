@@ -1,0 +1,89 @@
+.grade-report {
+  width: 100%;
+}
+
+.summary-card {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  color: var(--text-light);
+  font-size: 16px;
+}
+
+.average-grade {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: var(--primary-color);
+}
+
+.performance {
+  font-weight: 500;
+  color: var(--success-color);
+}
+
+.grades-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.grades-table th {
+  background-color: var(--secondary-color);
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.grades-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.grade {
+  font-weight: bold;
+}
+
+.grade.good {
+  color: var(--success-color);
+}
+
+.grade.medium {
+  color: var(--warning-color);
+}
+
+.grade.bad {
+  color: var(--error-color);
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status.approved {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--success-color);
+}
+
+.status.recovery {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: var(--warning-color);
+}
+
+.status.failed {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: var(--error-color);
+}

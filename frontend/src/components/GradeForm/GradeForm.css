@@ -1,0 +1,68 @@
+.grade-form {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 20px;
+}
+
+.grade-form table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.grade-form th, .grade-form td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.grade-form th {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.grade-form tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.grade-form input[type="number"] {
+  width: 80px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+}
+
+.grade-form input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+}
+
+.save-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-button:hover {
+  background-color: var(--primary-dark);
+}
+
+@media (max-width: 768px) {
+  .grade-form th, .grade-form td {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  
+  .grade-form input[type="number"] {
+    width: 70px;
+  }
+}

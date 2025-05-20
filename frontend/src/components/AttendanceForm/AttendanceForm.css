@@ -1,0 +1,62 @@
+.attendance-form {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 20px;
+}
+
+.attendance-form .form-group {
+  margin-bottom: 20px;
+}
+
+.attendance-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.attendance-form input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+}
+
+.attendance-form table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.attendance-form th, .attendance-form td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.attendance-form th {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.attendance-form tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.attendance-form input[type="radio"] {
+  transform: scale(1.2);
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .attendance-form th, .attendance-form td {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  
+  .attendance-form input[type="radio"] {
+    transform: scale(1);
+  }
+}

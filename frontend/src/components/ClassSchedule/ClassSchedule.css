@@ -1,0 +1,77 @@
+.class-schedule {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+}
+
+.class-schedule table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.class-schedule th {
+  background-color: var(--secondary-color);
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.class-schedule td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+.subject {
+  font-weight: 500;
+}
+
+.teacher {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.compact-schedule {
+  padding: 15px;
+}
+
+.schedule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.schedule-item:last-child {
+  border-bottom: none;
+}
+
+.time {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.today-class {
+  font-weight: 500;
+}
+
+.view-all {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.view-all button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.view-all button:hover {
+  text-decoration: underline;
+}
