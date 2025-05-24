@@ -7,12 +7,16 @@ public class AttendanceDTO {
     private Instant date;
     private Boolean present;
     private String student;
-    private Long classesId;
+    private String subjectName;
+    private String teacherName;
+    private Long subjectId;
 
-    public AttendanceDTO(Instant date, Long classesId, Long id, Boolean present, String student) {
+    public AttendanceDTO(Instant date, Long subjectId, String subjectName,String teacherName, Long id, Boolean present, String student) {
         this.date = date;
-        this.classesId = classesId;
+        this.subjectId = subjectId;
         this.id = id;
+        this.subjectName = subjectName;
+        this.teacherName = teacherName;
         this.present = present;
         this.student = student;
     }
@@ -51,13 +55,31 @@ public class AttendanceDTO {
         this.student = student;
     }
 
-    public Long getClassesId() {
-        return classesId;
+    public Long getSubjectId() {
+        return subjectId;
     }
 
-    public void setClassesId(Long classesId) {
-        this.classesId = classesId;
+    public void setSubjectId(Long subjectId) {
+        this.subjectId = subjectId;
     }
-    
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public String getTeacherName() {
+        return teacherName;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
+    } 
     
 }
+
+    
+

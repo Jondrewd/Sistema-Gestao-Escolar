@@ -24,8 +24,10 @@ public class AttendanceMapper {
             dto.setStudent(attendance.getStudent().getCpf());
         }
 
-        if (attendance.getClasses() != null) {
-            dto.setClassesId(attendance.getClasses().getId()); 
+        if (attendance.getSubject() != null) {
+            dto.setSubjectId(attendance.getSubject().getId());
+            dto.setSubjectName(attendance.getSubject().getName());
+            dto.setSubjectName(attendance.getSubject().getTeacher().getFullName());
         }
 
         return dto;

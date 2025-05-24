@@ -1,15 +1,16 @@
 package com.api.gestaoescolar.entities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -23,32 +24,23 @@ public class Classes {
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "teacher_id") 
-    private Teacher teacher;
+    @OneToMany(mappedBy="classes",fetch = FetchType.LAZY)
+    private List<Subject> subject = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "course_id") 
-    private Course course;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Student> students = new HashSet<>();
 
-    @ManyToMany
-    private List<Student> students = new ArrayList<>();
 
-    @OneToMany(mappedBy = "classes")
-    private List<Attendance> attendances = new ArrayList<>();
-
-    public Classes(Long id, String name, Teacher teacher, Course course, 
-                List<Student> students, List<Attendance> attendances) {
+     public Classes(Long id, String name, List<Subject> subject, Set<Student> students) {
         this.id = id;
         this.name = name;
-        this.teacher = teacher;
-        this.course = course;
-        this.students = students != null ? students : new ArrayList<>();
-        this.attendances = attendances != null ? attendances : new ArrayList<>();
+        this.subject = subject;
+        this.students = students;
     }
 
-    public Classes(String name, Teacher teacher, Course course) {
-        this(null, name, teacher, course, null, null);
+
+     public Classes(String name, List<Subject> subject) {
+        this(null, name, subject, null);
     }
 
     public Classes() {}
@@ -68,60 +60,40 @@ public class Classes {
     public void setName(String name) {
         this.name = name;
     }
-
-    public Teacher getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
-    public List<Student> getStudents() {
+  
+    public Set<Student> getStudents() {
         return students;
     }
 
-    public void setStudents(List<Student> students) {
-        this.students = students != null ? students : new ArrayList<>();
+    public void setStudents(Set<Student> students) {
+        this.students = students != null ? students : new HashSet<>();
     }
 
-    public List<Attendance> getAttendances() {
-        return attendances;
-    }
-
-    public void setAttendances(List<Attendance> attendances) {
-        this.attendances = attendances != null ? attendances : new ArrayList<>();
-    }
 
     public void addStudent(Student student) {
         if (student != null && !this.students.contains(student)) {
             this.students.add(student);
-            student.getClasses().add(this);
         }
     }
 
     public void removeStudent(Student student) {
         if (student != null) {
             this.students.remove(student);
-            student.getClasses().remove(this);
         }
     }
 
-    public void addAttendance(Attendance attendance) {
-        if (attendance != null) {
-            this.attendances.add(attendance);
-            attendance.setClasses(this);
+    public void addSubject(Subject subject) {
+        if (subject != null && !this.subject.contains(subject)) {
+            this.subject.add(subject);
         }
     }
 
+    public void removeSubject(Subject subject) {
+        if (subject != null) {
+            this.subject.remove(subject);
+        }
+    }
+   
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -145,5 +117,19 @@ public class Classes {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+
+    public List<Subject> getSubjects() {
+        return subject;
+    }
+
+
+    public void setSubjects(List<Subject> subject) {
+        this.subject = subject;
+    }
+
+    public Object stream() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

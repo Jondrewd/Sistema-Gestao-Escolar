@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.api.gestaoescolar.dtos.ClassScheduleDTO;
 import com.api.gestaoescolar.dtos.StudentDTO;
 import com.api.gestaoescolar.dtos.TeacherDTO;
 import com.api.gestaoescolar.dtos.UserDTO;
@@ -20,8 +21,11 @@ import com.api.gestaoescolar.exceptions.ResourceNotFoundException;
 import com.api.gestaoescolar.mappers.UserMapper;
 import com.api.gestaoescolar.repositories.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
@@ -58,7 +62,7 @@ public class UserService implements UserDetailsService {
         User existingUser = userRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + id));
 
-        UserMapper.updateFromDto(userDTO, existingUser);
+        UserMapper.updateUserFromDto(userDTO, existingUser);
         User updatedUser = userRepository.save(existingUser);
         return UserMapper.toDto(updatedUser);
     }
@@ -113,14 +117,29 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public StudentDTO updateStudent(String cpf, UserDTO studentDTO) {
-        User existingStudent = userRepository.findByCpf(cpf)
+    public StudentDTO updateStudent(String cpf, StudentDTO studentDTO) {
+        Student existingStudent = (Student) userRepository.findByCpf(cpf)
             .orElseThrow(() -> new ResourceNotFoundException("Estudante não encontrado com CPF: " + cpf));
 
-        UserMapper.updateFromDto(studentDTO, existingStudent);
+        UserMapper.updateStudentFromDto(studentDTO, existingStudent);
         User updatedStudent = userRepository.save(existingStudent);
         return UserMapper.toStudentDTO((Student) updatedStudent);
     }
+
+        public List<ClassScheduleDTO> getClassScheduleForStudent(String cpf) {
+        Student student = userRepository.findStudentByCpf(cpf)
+            .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+
+        return student.getClasses().getSubjects().stream()
+            .map(subject -> new ClassScheduleDTO(
+                subject.getName(),
+                subject.getDayOfWeek().getDisplayName(),
+                subject.getStartTime().toString(),
+                subject.getEndTime().toString()
+            ))
+            .collect(Collectors.toList());
+    }
+
 
 
     // Métodos para Teachers
@@ -152,11 +171,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public TeacherDTO updateTeacher(String cpf, UserDTO teacherDTO) {
-        User existingTeacher = userRepository.findByCpf(cpf)
+    public TeacherDTO updateTeacher(String cpf, TeacherDTO teacherDTO) {
+        Teacher existingTeacher = (Teacher) userRepository.findByCpf(cpf)
             .orElseThrow(() -> new ResourceNotFoundException("Professor não encontrado com CPF: " + cpf));
 
-        UserMapper.updateFromDto(teacherDTO, existingTeacher);
+        UserMapper.updateTeacherFromDto(teacherDTO, existingTeacher);
         User updatedTeacher = userRepository.save(existingTeacher);
 
         return UserMapper.toTeacherDTO((Teacher) updatedTeacher);

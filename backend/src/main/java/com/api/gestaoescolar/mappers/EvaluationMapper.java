@@ -25,8 +25,9 @@ public class EvaluationMapper {
             dto.setStudent(evaluation.getStudent().getCpf());
         }
 
-        if (evaluation.getCourse() != null) {
-            dto.setCourse(CourseMapper.toDto(evaluation.getCourse()));
+        if (evaluation.getSubject() != null) {
+            dto.setSubjectId(evaluation.getSubject().getId());
+            dto.setSubjectName(evaluation.getSubject().getName());
         }
 
         return dto;

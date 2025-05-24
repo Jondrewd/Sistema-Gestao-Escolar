@@ -16,7 +16,6 @@ public class Evaluation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Instant date;
     private Double score;
 
@@ -25,15 +24,15 @@ public class Evaluation {
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false) 
-    private Course course;
+    @JoinColumn(name = "subject_id", nullable = false) 
+    private Subject subject;
 
-    public Evaluation(Long id, Instant date, Double score, Student student, Course course) {
+    public Evaluation(Long id, Instant date, Double score, Student student, Subject subject) {
         this.id = id;
         this.date = date;
         this.score = score;
         this.student = student;
-        this.course = course;
+        this.subject = subject;
     }
 
     public Evaluation() {
@@ -71,12 +70,12 @@ public class Evaluation {
         this.student = student;
     }
 
-    public Course getCourse() {
-        return course;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     

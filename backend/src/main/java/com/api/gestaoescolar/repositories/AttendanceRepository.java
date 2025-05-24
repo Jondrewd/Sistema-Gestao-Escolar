@@ -15,15 +15,14 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>{
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Attendance a WHERE a.classes.id = :classesId")
-    void deleteByClassesId(@Param("classesId") Long classesId);
+    @Query("DELETE FROM Attendance a WHERE a.subject.id = :subjectId")
+    void deleteBySubjectId(@Param("subjectId") Long subjectId);
     
     @Transactional
     @Modifying
-    void deleteAllByClassesId(Long classesId); 
+    void deleteAllBySubjectId(Long subjsctId); 
 
 
     Page<Attendance> findByStudentCpf(String cpf, Pageable pageable);
-
 
 }

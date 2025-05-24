@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.api.gestaoescolar.dtos.AttendanceDTO;
 import com.api.gestaoescolar.entities.Attendance;
-import com.api.gestaoescolar.entities.Classes;
 import com.api.gestaoescolar.entities.Student;
+import com.api.gestaoescolar.entities.Subject;
 import com.api.gestaoescolar.exceptions.ResourceNotFoundException;
 import com.api.gestaoescolar.mappers.AttendanceMapper;
 import com.api.gestaoescolar.repositories.AttendanceRepository;
-import com.api.gestaoescolar.repositories.ClassesRepository;
+import com.api.gestaoescolar.repositories.SubjectRepository;
 import com.api.gestaoescolar.repositories.UserRepository;
 
 @Service
@@ -21,12 +21,12 @@ public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
-    private final ClassesRepository classesRepository;
+    private final SubjectRepository subjectRepository;
 
-    public AttendanceService(AttendanceRepository attendanceRepository, UserRepository userRepository, ClassesRepository classesRepository) {
+    public AttendanceService(AttendanceRepository attendanceRepository, UserRepository userRepository, SubjectRepository subjectRepository) {
         this.attendanceRepository = attendanceRepository;
         this.userRepository = userRepository;
-        this.classesRepository = classesRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     @Transactional(readOnly = true)
@@ -45,6 +45,13 @@ public class AttendanceService {
     @Transactional
     public AttendanceDTO create(AttendanceDTO attendanceDTO) {
         Attendance attendance = AttendanceMapper.toEntity(attendanceDTO);
+
+        attendance.setStudent(userRepository.findStudentByCpf(attendanceDTO.getStudent())
+            .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado." + attendanceDTO.getStudent())));
+
+        attendance.setSubject(subjectRepository.findById(attendanceDTO.getSubjectId())
+            .orElseThrow(() -> new ResourceNotFoundException("Materia não encontrada.")));
+        
         Attendance savedAttendance = attendanceRepository.save(attendance);
         return AttendanceMapper.toDTO(savedAttendance);
     }
@@ -70,10 +77,10 @@ public AttendanceDTO update(Long id, AttendanceDTO dto) {
         entity.setStudent(student);
     }
     
-    if (dto.getClassesId() != null) {
-        Classes classes = classesRepository.findById(dto.getClassesId())
+    if (dto.getSubjectId() != null) {
+        Subject subject = subjectRepository.findById(dto.getSubjectId())
             .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada"));
-        entity.setClasses(classes);
+        entity.setSubject(subject);
     }
     
     Attendance updated = attendanceRepository.save(entity);

@@ -188,6 +188,7 @@ public class ClassesController {
     public ResponseEntity<List<String>> getStudentsInClass(
             @Parameter(description = "ID da turma", example = "1")
             @PathVariable Long id) {
-        return ResponseEntity.ok(classesService.getClassById(id).getStudents());
+        return ResponseEntity.ok(classesService.getStudentsInClass(id));
     }
+
 }

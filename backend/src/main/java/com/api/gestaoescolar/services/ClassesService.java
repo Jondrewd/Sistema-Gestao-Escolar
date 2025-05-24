@@ -1,7 +1,8 @@
 package com.api.gestaoescolar.services;
 
-import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -23,44 +24,41 @@ public class ClassesService {
 
     private final ClassesRepository classesRepository;
     private final UserRepository userRepository;
-    private final CourseRepository courseRepository;
-    private final AttendanceRepository attendanceRepository;
+    private final SubjectRepository subjectRepository;
 
     public ClassesService(ClassesRepository classesRepository,
                           UserRepository userRepository,
-                          CourseRepository courseRepository,
-                          AttendanceRepository attendanceRepository) {
+                          SubjectRepository subjectRepository) {
         this.classesRepository = classesRepository;
         this.userRepository = userRepository;
-        this.courseRepository = courseRepository;
-        this.attendanceRepository = attendanceRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     public ClassesDTO createClass(ClassesDTO classesDTO) {
         Classes newClass = ClassesMapper.toEntity(classesDTO);
+     List<Long> subjectIds = classesDTO.getSubjectIds();
+        List<Subject> subject = subjectRepository.findAllById(subjectIds);
 
-        if (classesDTO.getTeacher() != null) {
-            Teacher teacher = userRepository.findTeacherByCpf(classesDTO.getTeacher())
-                    .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado ou não é do tipo TEACHER: " + classesDTO.getTeacher()));
-            newClass.setTeacher(teacher);
+        if (subject.size() != subjectIds.size()) {
+            throw new EntityNotFoundException("Um ou mais cursos não encontrados com os IDs: " + subjectIds);
         }
 
-        Course course = courseRepository.findById(classesDTO.getCourse())
-                .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com ID: " + classesDTO.getCourse()));
+        newClass.setSubjects(subject);
 
-        newClass.setCourse(course);
-
-        if (classesDTO.getStudents() != null && !classesDTO.getStudents().isEmpty()) {
-            List<Student> students = userRepository.findStudentsByCpf(classesDTO.getStudents())
-                    .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
-            newClass.setStudents(students);
+        if (classesDTO.getStudentCpfs() != null && !classesDTO.getStudentCpfs().isEmpty()) {
+        List<Student> studentList = userRepository.findStudentsByCpf(classesDTO.getStudentCpfs()) 
+            .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
+        
+        if (studentList.isEmpty()) {
+            throw new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT");
         }
+
+    Set<Student> students = new HashSet<>(studentList);
+    newClass.setStudents(students);
+}
+
 
         Classes savedClass = classesRepository.save(newClass);
-
-        if (newClass.getStudents() != null && !newClass.getStudents().isEmpty()) {
-            createDefaultAttendances(savedClass, newClass.getStudents());
-        }
 
         return ClassesMapper.toDto(savedClass);
     }
@@ -86,14 +84,12 @@ public class ClassesService {
 
         studentsToAdd.forEach(student -> {
             if (!existingClass.getStudents().contains(student)) {
+                student.setClasses(existingClass);
                 existingClass.getStudents().add(student);
             }
         });
 
         Classes updatedClass = classesRepository.save(existingClass);
-
-        createDefaultAttendances(updatedClass, studentsToAdd);
-
         return ClassesMapper.toDto(updatedClass);
     }
 
@@ -103,27 +99,33 @@ public class ClassesService {
 
         existingClass.setName(classesDTO.getName());
 
-        if (classesDTO.getTeacher() != null &&
-            (existingClass.getTeacher() == null || !existingClass.getTeacher().getCpf().equals(classesDTO.getTeacher()))) {
-            Teacher newTeacher = userRepository.findTeacherByCpf(classesDTO.getTeacher())
-                    .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado ou não é do tipo TEACHER"));
-            existingClass.setTeacher(newTeacher);
+
+        List<Long> newSubjectIds = classesDTO.getSubjectIds();
+        List<Subject> newSubjects = subjectRepository.findAllById(newSubjectIds);
+
+        if (newSubjects.size() != newSubjectIds.size()) {
+            throw new EntityNotFoundException("Um ou mais cursos não encontrados com os IDs: " + newSubjectIds);
         }
 
-        if (!existingClass.getCourse().getId().equals(classesDTO.getCourse())) {
-            Course newCourse = courseRepository.findById(classesDTO.getCourse())
-                    .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
-            existingClass.setCourse(newCourse);
+        List<Long> currentSubjectIds = existingClass.getSubjects().stream()
+            .map(Subject::getId)
+            .collect(Collectors.toList());
+
+        if (!currentSubjectIds.containsAll(newSubjectIds) || !newSubjectIds.containsAll(currentSubjectIds)) {
+            existingClass.setSubjects(newSubjects);
         }
+
 
         List<String> currentStudentCpfs = existingClass.getStudents().stream()
                 .map(Student::getCpf)
                 .collect(Collectors.toList());
 
-        if (!currentStudentCpfs.equals(classesDTO.getStudents())) {
-            List<Student> newStudents = userRepository.findStudentsByCpf(classesDTO.getStudents())
+        if (!currentStudentCpfs.equals(classesDTO.getStudentCpfs())) {
+            List<Student> newStudents = userRepository.findStudentsByCpf(classesDTO.getStudentCpfs())
                     .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
-            existingClass.setStudents(newStudents);
+            Set<Student> students = new HashSet<>(newStudents);
+
+            existingClass.setStudents(students);
         }
 
         Classes updatedClass = classesRepository.save(existingClass);
@@ -133,23 +135,16 @@ public class ClassesService {
     public void deleteClass(Long id) {
         Classes classes = classesRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
-
-        attendanceRepository.deleteByClassesId(id);
         classesRepository.delete(classes);
     }
 
-    private void createDefaultAttendances(Classes classes, List<Student> students) {
-        List<Attendance> attendances = students.stream()
-                .map(student -> {
-                    Attendance attendance = new Attendance();
-                    attendance.setStudent(student);
-                    attendance.setClasses(classes);
-                    attendance.setPresent(false);
-                    attendance.setDate(Instant.now());
-                    return attendance;
-                })
-                .collect(Collectors.toList());
+    public List<String> getStudentsInClass(Long classId) {
+    Classes classe = classesRepository.findByIdWithRelations(classId)
+            .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + classId));
 
-        attendanceRepository.saveAll(attendances);
+    return classe.getStudents().stream()
+            .map(Student::getCpf) 
+            .collect(Collectors.toList());
     }
+
 }

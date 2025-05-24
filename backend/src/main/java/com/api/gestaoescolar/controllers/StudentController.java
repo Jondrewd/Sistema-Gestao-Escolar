@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.api.gestaoescolar.dtos.ClassScheduleDTO;
 import com.api.gestaoescolar.dtos.StudentDTO;
 import com.api.gestaoescolar.dtos.UserDTO;
 import com.api.gestaoescolar.services.UserService;
@@ -21,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.net.URI;
+import java.util.List;
 
 @Tag(
     name = "Gerenciamento de Estudantes", 
@@ -142,7 +144,7 @@ public class StudentController {
                     schema = @Schema(implementation = StudentDTO.class)
                 )
             )
-            @RequestBody UserDTO student) {
+            @RequestBody StudentDTO student) {
         return ResponseEntity.ok(service.updateStudent(cpf, student));
     }
 
@@ -162,5 +164,22 @@ public class StudentController {
         service.deleteByCpf(cpf);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+    summary = "Obter horários das aulas do estudante",
+    description = "Retorna a lista de disciplinas com os horários de aula de um estudante com base no CPF fornecido."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Horários encontrados com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Estudante não encontrado"),
+        @ApiResponse(responseCode = "400", description = "CPF inválido")
+    })
+    @GetMapping("/students/{cpf}/schedule")
+    public ResponseEntity<List<ClassScheduleDTO>> getStudentSchedule(
+            @Parameter(description = "CPF do estudante", example = "12345678901") 
+            @PathVariable String cpf) {
+        return ResponseEntity.ok(service.getClassScheduleForStudent(cpf));
+    }
+
 
 }

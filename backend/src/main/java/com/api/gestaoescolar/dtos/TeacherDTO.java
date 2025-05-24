@@ -11,22 +11,20 @@ public class TeacherDTO {
     private String email;
     private String speciality;
     private Instant createdAt;
-    private List<ClassesDTO> classes;
-    
-    public TeacherDTO() {
-    }
+    private List<SubjectDTO> subject; 
+
+    public TeacherDTO() {}
 
     public TeacherDTO(Long id, String fullName, String cpf, String email, String speciality,
-            Instant createdAt, List<ClassesDTO> classes) {
+                      Instant createdAt, List<SubjectDTO> subject) {
         this.id = id;
         this.fullName = fullName;
         this.cpf = cpf;
         this.email = email;
         this.speciality = speciality;
         this.createdAt = createdAt;
-        this.classes = classes;
+        this.subject = subject;
     }
-
     public String getFullName() {
         return fullName;
     }
@@ -77,16 +75,17 @@ public class TeacherDTO {
         this.speciality = speciality;
     }
 
-    public List<ClassesDTO> getClasses() {
-        return classes;
-    }
-
-    public void setClasses(List<ClassesDTO> classes) {
-        this.classes = classes;
-    }
-
+ 
     public String getUsertype() {
         return usertype;
+    }
+
+    public List<SubjectDTO> getSubjects() {
+        return subject;
+    }
+
+    public void setSubjects(List<SubjectDTO> subject) {
+        this.subject = subject;
     }
 
     

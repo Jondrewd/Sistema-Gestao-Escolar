@@ -143,7 +143,7 @@ public class TeacherController {
                     schema = @Schema(implementation = TeacherDTO.class)
                 )
             )
-            @RequestBody UserDTO teacher) {
+            @RequestBody TeacherDTO teacher) {
         return ResponseEntity.ok(service.updateTeacher(cpf, teacher));
     }
 

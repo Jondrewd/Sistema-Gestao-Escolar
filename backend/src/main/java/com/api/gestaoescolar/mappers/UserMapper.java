@@ -11,16 +11,14 @@ public class UserMapper {
 
     private UserMapper() {}
 
+    // Mapeamento básico para UserDTO (sem campos de Student/Teacher)
     public static UserDTO toDto(User user) {
-        if (user == null) {
-            return null;
-        }
+        if (user == null) return null;
 
         UserDTO userDto = new UserDTO();
         userDto.setId(user.getId());
         userDto.setCpf(user.getCpf());
         userDto.setEmail(user.getEmail());
-        userDto.setPassword(user.getPassword());
         userDto.setCreatedAt(user.getCreatedAt());
         userDto.setFullName(user.getFullName());
 
@@ -28,36 +26,23 @@ public class UserMapper {
             userDto.setUserType("STUDENT");
         } else if (user instanceof Teacher) {
             userDto.setUserType("TEACHER");
-        }
-
-        if (user instanceof Student student) {
-            userDto.setRegistrationNumber(student.getRegistrationNumber());
-            userDto.setStudentClasses(ClassesMapper.toDtoList(student.getClasses()));
-            userDto.setEvaluations(EvaluationMapper.toDtoList(student.getEvaluations()));
-            userDto.setAttendances(AttendanceMapper.toDtoList(student.getAttendances()));
-        } else if (user instanceof Teacher teacher) {
-            userDto.setSpeciality(teacher.getSpeciality());
-            userDto.setTeacherClasses(ClassesMapper.toDtoList(teacher.getClasses()));
+        } else {
+            userDto.setUserType("USER");
         }
 
         return userDto;
     }
 
+    // Conversão de UserDTO para entidade
     public static User toEntity(UserDTO userDto) {
-        if (userDto == null) {
-            return null;
-        }
+        if (userDto == null) return null;
 
         User user;
 
         if ("STUDENT".equalsIgnoreCase(userDto.getUserType())) {
-            Student student = new Student();
-            student.setRegistrationNumber(userDto.getRegistrationNumber());
-            user = student;
+            user = new Student();
         } else if ("TEACHER".equalsIgnoreCase(userDto.getUserType())) {
-            Teacher teacher = new Teacher();
-            teacher.setSpeciality(userDto.getSpeciality());
-            user = teacher;
+            user = new Teacher();
         } else {
             user = new User() {};
         }
@@ -65,36 +50,85 @@ public class UserMapper {
         user.setId(userDto.getId());
         user.setCpf(userDto.getCpf());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
         user.setCreatedAt(userDto.getCreatedAt());
         user.setFullName(userDto.getFullName());
 
         return user;
     }
-
-    public static void updateFromDto(UserDTO userDto, User user) {
-        if (userDto == null || user == null) {
-            return;
-        }
+    public static void updateUserFromDto(UserDTO userDto, User user) {
+        if (userDto == null || user == null) return;
 
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
         }
-        if (userDto.getPassword() != null) {
-            user.setPassword(userDto.getPassword());
-        }
         if (userDto.getFullName() != null) {
             user.setFullName(userDto.getFullName());
         }
+        if (userDto.getPassword() != null) {
+            user.setPassword(userDto.getPassword());
+        }
+    }
+    public static void updateStudentFromDto(StudentDTO dto, Student student) {
+        if (dto == null || student == null) return;
 
-        if (user instanceof Student student && "STUDENT".equalsIgnoreCase(userDto.getUserType())) {
-            if (userDto.getRegistrationNumber() != null) {
-                student.setRegistrationNumber(userDto.getRegistrationNumber());
-            }
-        } else if (user instanceof Teacher teacher && "TEACHER".equalsIgnoreCase(userDto.getUserType())) {
-            if (userDto.getSpeciality() != null) {
-                teacher.setSpeciality(userDto.getSpeciality());
-            }
+        if (dto.getEmail() != null) {
+            student.setEmail(dto.getEmail());
+        }
+        if (dto.getFullName() != null) {
+            student.setFullName(dto.getFullName());
+        }
+        if (dto.getCpf() != null) {
+            student.setCpf(dto.getCpf());
+        }
+        if (dto.getRegistrationNumber() != null) {
+            student.setRegistrationNumber(dto.getRegistrationNumber());
+        }
+
+        if (dto.getClasses() != null) {
+            student.setClasses(
+                ClassesMapper.toEntity(dto.getClasses())
+            );
+        }
+
+        if (dto.getEvaluations() != null) {
+            student.setEvaluations(
+                dto.getEvaluations().stream()
+                    .map(EvaluationMapper::toEntity)
+                    .toList()
+            );
+        }
+
+        if (dto.getAttendances() != null) {
+            student.setAttendances(
+                dto.getAttendances().stream()
+                    .map(AttendanceMapper::toEntity)
+                    .toList()
+            );
+        }
+    }
+
+    public static void updateTeacherFromDto(TeacherDTO dto, Teacher teacher) {
+        if (dto == null || teacher == null) return;
+
+        if (dto.getEmail() != null) {
+            teacher.setEmail(dto.getEmail());
+        }
+        if (dto.getFullName() != null) {
+            teacher.setFullName(dto.getFullName());
+        }
+        if (dto.getCpf() != null) {
+            teacher.setCpf(dto.getCpf());
+        }
+        if (dto.getSpeciality() != null) {
+            teacher.setSpeciality(dto.getSpeciality());
+        }
+
+        if (dto.getSubjects() != null) {
+            teacher.setSubjects(
+                dto.getSubjects().stream()
+                    .map(SubjectMapper::toEntity)
+                    .toList()
+            );
         }
     }
 
@@ -107,7 +141,7 @@ public class UserMapper {
         dto.setEmail(student.getEmail());
         dto.setCreatedAt(student.getCreatedAt());
         dto.setRegistrationNumber(student.getRegistrationNumber());
-        dto.setClasses(ClassesMapper.toDtoList(student.getClasses()));
+        dto.setClasses(ClassesMapper.toDto(student.getClasses()));
         dto.setEvaluations(EvaluationMapper.toDtoList(student.getEvaluations()));
         dto.setAttendances(AttendanceMapper.toDtoList(student.getAttendances()));
         dto.setFullName(student.getFullName());
@@ -124,7 +158,7 @@ public class UserMapper {
         dto.setEmail(teacher.getEmail());
         dto.setCreatedAt(teacher.getCreatedAt());
         dto.setSpeciality(teacher.getSpeciality());
-        dto.setClasses(ClassesMapper.toDtoList(teacher.getClasses()));
+        dto.setSubjects(SubjectMapper.toDtoList(teacher.getSubjects()));
         dto.setFullName(teacher.getFullName());
 
         return dto;

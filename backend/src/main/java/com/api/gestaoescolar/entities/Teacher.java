@@ -15,18 +15,18 @@ public class Teacher extends User {
     private String speciality;
 
     @OneToMany(mappedBy = "teacher")
-    private List<Classes> Classes = new ArrayList<>();
+    private List<Subject> subject = new ArrayList<>();
 
     public Teacher(Long id, String fullName, String cpf, String email, String password,
-            Instant createdAt, String speciality, List<com.api.gestaoescolar.entities.Classes> classes) {
+            Instant createdAt, String speciality, List<Subject> subject) {
         super(id, fullName, cpf, email, password, createdAt);
         this.speciality = speciality;
-        Classes = classes;
+        this.subject = subject;
     }
 
-    public Teacher(String speciality, List<Classes> classes) {
+    public Teacher(String speciality, List<Subject> subject) {
         this.speciality = speciality;
-        Classes = classes;
+        this.subject = subject;
     }
 
     public Teacher() {
@@ -41,25 +41,25 @@ public class Teacher extends User {
         this.speciality = speciality;
     }
 
-    public List<Classes> getClasses() {
-        return Classes;
+    public List<Subject> getSubjects() {
+        return subject;
     }
 
-    public void setClasses(List<Classes> Classes) {
-        this.Classes = Classes != null ? Classes : new ArrayList<>();
+    public void setSubjects(List<Subject> subject) {
+        this.subject = subject != null ? subject : new ArrayList<>();
     }
 
-    public void addClasses(Classes classes) {
-        if (classes != null) {
-            this.Classes.add(classes);
-            classes.setTeacher(this);
+    public void addSubjects(Subject subject) {
+        if (subject != null) {
+            this.subject.add(subject);
+            subject.setTeacher(this);
         }
     }
 
-    public void removeClasses(Classes classes) {
-        if (classes != null) {
-            this.Classes.remove(classes);
-            classes.setTeacher(null);
+    public void removeSubjects(Subject subject) {
+        if (subject != null) {
+            this.subject.remove(subject);
+            subject.setTeacher(null);
         }
     }
 }

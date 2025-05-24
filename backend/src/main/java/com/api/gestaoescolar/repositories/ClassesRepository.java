@@ -15,17 +15,17 @@ import com.api.gestaoescolar.entities.Classes;
 
 public interface ClassesRepository extends JpaRepository<Classes, Long>{
 
-    @EntityGraph(attributePaths = {"teacher", "course", "students", "attendances"})
+    @EntityGraph(attributePaths = {"subject", "students"})
     @Query("SELECT c FROM Classes c WHERE c.id = :id")
     Optional<Classes> findByIdWithRelations(@Param("id") Long id);
 
-    @EntityGraph(attributePaths = {"teacher", "course"})
+    @EntityGraph(attributePaths = {"students", "subject"})
     @Query("SELECT c FROM Classes c")
     Page<Classes> findAllWithRelations(Pageable pageable);
 
     @Query("SELECT DISTINCT c FROM Classes c " +
-           "LEFT JOIN FETCH c.teacher " +
-           "LEFT JOIN FETCH c.course " +
-           "LEFT JOIN FETCH c.students")
+        "JOIN FETCH c.subject " +
+        "LEFT JOIN FETCH c.students")
     List<Classes> findAllWithRelationsDetailed();
+
 }

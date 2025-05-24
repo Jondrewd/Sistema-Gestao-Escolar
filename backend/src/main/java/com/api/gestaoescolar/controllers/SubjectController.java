@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.api.gestaoescolar.dtos.CourseDTO;
-import com.api.gestaoescolar.services.CourseService;
+import com.api.gestaoescolar.dtos.SubjectDTO;
+import com.api.gestaoescolar.services.SubjectService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,12 +26,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
     description = "Endpoint para operações de cursos acadêmicos"
 )
 @RestController
-@RequestMapping("/api/v1/courses")
-public class CourseController {
+@RequestMapping("/api/v1/subject")
+public class SubjectController {
     
-    private final CourseService service;
+    private final SubjectService service;
 
-    public CourseController(CourseService service) {
+    public SubjectController(SubjectService service) {
         this.service = service;
     }
 
@@ -46,7 +46,7 @@ public class CourseController {
         @ApiResponse(responseCode = "400", description = "Parâmetros de paginação inválidos")
     })
     @GetMapping
-    public ResponseEntity<Page<CourseDTO>> findAll(
+    public ResponseEntity<Page<SubjectDTO>> findAll(
             @Parameter(description = "Número da página (0-based)", example = "0") 
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             
@@ -70,12 +70,12 @@ public class CourseController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Curso encontrado com sucesso",
-                   content = @Content(schema = @Schema(implementation = CourseDTO.class))),
+                   content = @Content(schema = @Schema(implementation = SubjectDTO.class))),
         @ApiResponse(responseCode = "404", description = "Curso não encontrado"),
         @ApiResponse(responseCode = "400", description = "ID inválido")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<CourseDTO> findById(
+    public ResponseEntity<SubjectDTO> findById(
             @Parameter(description = "ID do curso", example = "1") 
             @PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
@@ -94,17 +94,17 @@ public class CourseController {
         description = "Dados do novo curso",
         required = true,
         content = @Content(
-            schema = @Schema(implementation = CourseDTO.class)
+            schema = @Schema(implementation = SubjectDTO.class)
         )
     )
     @PostMapping
-    public ResponseEntity<CourseDTO> insert(@RequestBody CourseDTO course) {
-        CourseDTO createdCourse = service.create(course);
+    public ResponseEntity<SubjectDTO> insert(@RequestBody SubjectDTO subject) {
+        SubjectDTO createdSubject = service.create(subject);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdCourse.getId())
+                .buildAndExpand(createdSubject.getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(createdCourse);
+        return ResponseEntity.created(uri).body(createdSubject);
     }
 
     @Operation(
@@ -117,7 +117,7 @@ public class CourseController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<CourseDTO> update(
+    public ResponseEntity<SubjectDTO> update(
             @Parameter(description = "ID do curso a ser atualizado", example = "1") 
             @PathVariable Long id, 
             
@@ -125,11 +125,11 @@ public class CourseController {
                 description = "Dados atualizados do curso",
                 required = true,
                 content = @Content(
-                    schema = @Schema(implementation = CourseDTO.class)
+                    schema = @Schema(implementation = SubjectDTO.class)
                 )
             )
-            @RequestBody CourseDTO course) {
-        return ResponseEntity.ok(service.update(id, course));
+            @RequestBody SubjectDTO subject) {
+        return ResponseEntity.ok(service.update(id, subject));
     }
 
     @Operation(
@@ -148,4 +148,5 @@ public class CourseController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+    
 }

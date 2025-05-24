@@ -6,7 +6,8 @@ import java.util.List;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -15,8 +16,9 @@ public class Student extends User {
 
     private String registrationNumber;
 
-    @ManyToMany(mappedBy = "students")
-    private List<Classes> Classes = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "classes_id")
+    private Classes classes;
     
     @OneToMany(mappedBy = "student")
     private List<Evaluation> evaluations = new ArrayList<>();
@@ -24,21 +26,19 @@ public class Student extends User {
     @OneToMany(mappedBy = "student")
     private List<Attendance> attendances = new ArrayList<>();
 
-
-    public Student(Long id, String fullName, String cpf, String email, String password,
-            Instant createdAt, String registrationNumber, List<com.api.gestaoescolar.entities.Classes> classes,
-            List<Evaluation> evaluations, List<Attendance> attendances) {
+    public Student(Long id, String fullName, String cpf, String email, String password, Instant createdAt,
+            String registrationNumber, Classes classes, List<Evaluation> evaluations, List<Attendance> attendances) {
         super(id, fullName, cpf, email, password, createdAt);
         this.registrationNumber = registrationNumber;
-        Classes = classes;
+        this.classes = classes;
         this.evaluations = evaluations;
         this.attendances = attendances;
     }
 
-    public Student(String registrationNumber, List<Classes> classes, List<Evaluation> evaluations,
+    public Student(String registrationNumber, Classes classes, List<Evaluation> evaluations,
             List<Attendance> attendances) {
         this.registrationNumber = registrationNumber;
-        Classes = classes;
+        this.classes = classes;
         this.evaluations = evaluations;
         this.attendances = attendances;
     }
@@ -55,12 +55,12 @@ public class Student extends User {
         this.registrationNumber = registrationNumber;
     }
 
-    public List<Classes> getClasses() {
-        return Classes;
+    public Classes getClasses() {
+        return classes;
     }
 
-    public void setClasses(List<Classes> Classes) {
-        this.Classes = Classes != null ? Classes : new ArrayList<>();
+    public void setClasses(Classes classes) {
+        this.classes = classes;
     }
 
     public List<Evaluation> getEvaluations() {
@@ -77,20 +77,6 @@ public class Student extends User {
 
     public void setAttendances(List<Attendance> attendances) {
         this.attendances = attendances != null ? attendances : new ArrayList<>();
-    }
-
-    public void enrollInClasses(Classes classes) {
-        if (classes != null && !this.Classes.contains(classes)) {
-            this.Classes.add(classes);
-            classes.getStudents().add(this);
-        }
-    }
-
-    public void unenrollFromClasses(Classes classes) {
-        if (classes != null) {
-            this.Classes.remove(classes);
-            classes.getStudents().remove(this);
-        }
     }
 
     public void addEvaluation(Evaluation evaluation) {
