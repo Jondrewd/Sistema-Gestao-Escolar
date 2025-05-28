@@ -13,7 +13,7 @@ public class StudentDTO {
     private Instant createdAt;
 
     private ClassesDTO classes;
-    private List<EvaluationDTO> evaluations;
+    private List<GradeDTO> grades;
     private List<AttendanceDTO> attendances;
 
     public StudentDTO() {
@@ -27,7 +27,7 @@ public class StudentDTO {
         String registrationNumber,
         Instant createdAt,
         ClassesDTO classes,
-        List<EvaluationDTO> evaluations,
+        List<GradeDTO> grades,
         List<AttendanceDTO> attendances
     ) {
         this.id = id;
@@ -37,7 +37,7 @@ public class StudentDTO {
         this.registrationNumber = registrationNumber;
         this.createdAt = createdAt;
         this.classes = classes;
-        this.evaluations = evaluations;
+        this.grades = grades;
         this.attendances = attendances;
     }
 
@@ -90,11 +90,11 @@ public class StudentDTO {
         this.classes = classes;
     }
 
-    public List<EvaluationDTO> getEvaluations() {
-        return evaluations;
+    public List<GradeDTO> getGrades() {
+        return grades;
     }
-    public void setEvaluations(List<EvaluationDTO> evaluations) {
-        this.evaluations = evaluations;
+    public void setGrades(List<GradeDTO> grades) {
+        this.grades = grades;
     }
 
     public List<AttendanceDTO> getAttendances() {

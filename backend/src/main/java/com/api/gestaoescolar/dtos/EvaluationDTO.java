@@ -1,26 +1,26 @@
 package com.api.gestaoescolar.dtos;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 public class EvaluationDTO {
 
     private Long id;
-    private Instant date;
-    private Double score;
-    private String student;      
+    private LocalDate date;   
     private Long subjectId;      
     private String subjectName;  
+    private Long classId;
 
     public EvaluationDTO() {}
 
-    public EvaluationDTO(Long id, Instant date, Double score, String student, Long subjectId, String subjectName) {
+    public EvaluationDTO(Long id, LocalDate date, Long subjectId, String subjectName, Long classId) {
         this.id = id;
         this.date = date;
-        this.score = score;
-        this.student = student;
         this.subjectId = subjectId;
         this.subjectName = subjectName;
+        this.classId = classId;
     }
+
+
 
 
     public Long getId() {
@@ -31,28 +31,12 @@ public class EvaluationDTO {
         this.id = id;
     }
 
-    public Instant getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Instant date) {
+    public void setDate(LocalDate date) {
         this.date = date;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
-    public String getStudent() {
-        return student;
-    }
-
-    public void setStudent(String student) {
-        this.student = student;
     }
 
     public Long getSubjectId() {
@@ -69,6 +53,20 @@ public class EvaluationDTO {
 
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
+    }
+
+
+
+
+    public Long getClassId() {
+        return classId;
+    }
+
+
+
+
+    public void setClassId(Long classId) {
+        this.classId = classId;
     }
 
    

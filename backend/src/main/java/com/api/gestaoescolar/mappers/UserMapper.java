@@ -11,7 +11,6 @@ public class UserMapper {
 
     private UserMapper() {}
 
-    // Mapeamento básico para UserDTO (sem campos de Student/Teacher)
     public static UserDTO toDto(User user) {
         if (user == null) return null;
 
@@ -33,7 +32,6 @@ public class UserMapper {
         return userDto;
     }
 
-    // Conversão de UserDTO para entidade
     public static User toEntity(UserDTO userDto) {
         if (userDto == null) return null;
 
@@ -90,13 +88,6 @@ public class UserMapper {
             );
         }
 
-        if (dto.getEvaluations() != null) {
-            student.setEvaluations(
-                dto.getEvaluations().stream()
-                    .map(EvaluationMapper::toEntity)
-                    .toList()
-            );
-        }
 
         if (dto.getAttendances() != null) {
             student.setAttendances(
@@ -123,10 +114,10 @@ public class UserMapper {
             teacher.setSpeciality(dto.getSpeciality());
         }
 
-        if (dto.getSubjects() != null) {
-            teacher.setSubjects(
-                dto.getSubjects().stream()
-                    .map(SubjectMapper::toEntity)
+        if (dto.getLessons() != null) {
+            teacher.setLessons(
+                dto.getLessons().stream()
+                    .map(LessonMapper::toEntity)
                     .toList()
             );
         }
@@ -142,7 +133,7 @@ public class UserMapper {
         dto.setCreatedAt(student.getCreatedAt());
         dto.setRegistrationNumber(student.getRegistrationNumber());
         dto.setClasses(ClassesMapper.toDto(student.getClasses()));
-        dto.setEvaluations(EvaluationMapper.toDtoList(student.getEvaluations()));
+        dto.setGrades(GradeMapper.toDtoList(student.getGrades()));
         dto.setAttendances(AttendanceMapper.toDtoList(student.getAttendances()));
         dto.setFullName(student.getFullName());
 
@@ -158,7 +149,7 @@ public class UserMapper {
         dto.setEmail(teacher.getEmail());
         dto.setCreatedAt(teacher.getCreatedAt());
         dto.setSpeciality(teacher.getSpeciality());
-        dto.setSubjects(SubjectMapper.toDtoList(teacher.getSubjects()));
+        dto.setLessons(LessonMapper.toDtoList(teacher.getLessons()));
         dto.setFullName(teacher.getFullName());
 
         return dto;

@@ -21,25 +21,25 @@ public class Student extends User {
     private Classes classes;
     
     @OneToMany(mappedBy = "student")
-    private List<Evaluation> evaluations = new ArrayList<>();
+    private List<Grade> grades = new ArrayList<>();
 
     @OneToMany(mappedBy = "student")
     private List<Attendance> attendances = new ArrayList<>();
 
     public Student(Long id, String fullName, String cpf, String email, String password, Instant createdAt,
-            String registrationNumber, Classes classes, List<Evaluation> evaluations, List<Attendance> attendances) {
+            String registrationNumber, Classes classes, List<Grade> grades, List<Attendance> attendances) {
         super(id, fullName, cpf, email, password, createdAt);
         this.registrationNumber = registrationNumber;
         this.classes = classes;
-        this.evaluations = evaluations;
+        this.grades = grades;
         this.attendances = attendances;
     }
 
-    public Student(String registrationNumber, Classes classes, List<Evaluation> evaluations,
+    public Student(String registrationNumber, Classes classes, List<Grade> grades,
             List<Attendance> attendances) {
         this.registrationNumber = registrationNumber;
         this.classes = classes;
-        this.evaluations = evaluations;
+        this.grades = grades;
         this.attendances = attendances;
     }
 
@@ -63,12 +63,12 @@ public class Student extends User {
         this.classes = classes;
     }
 
-    public List<Evaluation> getEvaluations() {
-        return evaluations;
+    public List<Grade> getGrades() {
+        return grades;
     }
 
-    public void setEvaluations(List<Evaluation> evaluations) {
-        this.evaluations = evaluations != null ? evaluations : new ArrayList<>();
+    public void setGrades(List<Grade> grades) {
+        this.grades = grades != null ? grades : new ArrayList<>();
     }
 
     public List<Attendance> getAttendances() {
@@ -79,10 +79,10 @@ public class Student extends User {
         this.attendances = attendances != null ? attendances : new ArrayList<>();
     }
 
-    public void addEvaluation(Evaluation evaluation) {
-        if (evaluation != null) {
-            this.evaluations.add(evaluation);
-            evaluation.setStudent(this);
+    public void addGrade(Grade grades) {
+        if (grades != null) {
+            this.grades.add(grades);
+            grades.setStudent(this);
         }
     }
 

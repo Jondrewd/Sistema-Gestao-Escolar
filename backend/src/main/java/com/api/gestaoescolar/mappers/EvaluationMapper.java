@@ -19,15 +19,14 @@ public class EvaluationMapper {
         EvaluationDTO dto = new EvaluationDTO();
         dto.setId(evaluation.getId());
         dto.setDate(evaluation.getDate());
-        dto.setScore(evaluation.getScore());
-
-        if (evaluation.getStudent() != null) {
-            dto.setStudent(evaluation.getStudent().getCpf());
-        }
+  
 
         if (evaluation.getSubject() != null) {
             dto.setSubjectId(evaluation.getSubject().getId());
             dto.setSubjectName(evaluation.getSubject().getName());
+        }
+        if (evaluation.getClasses() != null) {
+            dto.setClassId(evaluation.getClasses().getId());
         }
 
         return dto;
@@ -41,7 +40,6 @@ public class EvaluationMapper {
         Evaluation entity = new Evaluation();
         entity.setId(dto.getId());
         entity.setDate(dto.getDate());
-        entity.setScore(dto.getScore());
 
         return entity;
     }

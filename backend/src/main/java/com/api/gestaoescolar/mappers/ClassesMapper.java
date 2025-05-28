@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import com.api.gestaoescolar.dtos.ClassesDTO;
 import com.api.gestaoescolar.entities.Classes;
 import com.api.gestaoescolar.entities.Student;
-import com.api.gestaoescolar.entities.Subject;
+import com.api.gestaoescolar.entities.Lesson;
 
 public class ClassesMapper {
 
@@ -23,9 +23,9 @@ public class ClassesMapper {
         dto.setName(classes.getName());
 
         
-        if (classes.getSubjects() != null) {
-            dto.setSubjectIds(classes.getSubjects().stream()
-                    .map(Subject::getId)
+        if (classes.getLessons() != null) {
+            dto.setLessonIds(classes.getLessons().stream()
+                    .map(Lesson::getId)
                     .collect(Collectors.toList()));
         }
 

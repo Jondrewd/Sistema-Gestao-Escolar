@@ -1,38 +1,33 @@
 package com.api.gestaoescolar.entities;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "evaluation")
-public class Evaluation {
+@Table(name = "grades")
+public class Grade {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    private LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id", nullable = false) 
-    private Subject subject;
+    private Evaluation evaluation;
 
     @ManyToOne
-    private Classes classes;
-
-    public Evaluation(Long id, LocalDate date, Subject subject, Classes classes) {
+    private Student student;
+    private Double score;
+    public Grade(Long id, Evaluation evaluation, Student student, Double score) {
         this.id = id;
-        this.date = date;
-        this.subject = subject;
-        this.classes = classes;
+        this.evaluation = evaluation;
+        this.student = student;
+        this.score = score;
     }
 
-    public Evaluation() {
+    public Grade() {
     }
 
     public Long getId() {
@@ -43,28 +38,28 @@ public class Evaluation {
         this.id = id;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public Evaluation getEvaluation() {
+        return evaluation;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setEvaluation(Evaluation evaluation) {
+        this.evaluation = evaluation;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
-    public Classes getClasses() {
-        return classes;
+    public Double getScore() {
+        return score;
     }
-
-    public void setClasses(Classes classes) {
-        this.classes = classes;
+    
+    public void setScore(Double score) {
+        this.score = score;
     }
 
     @Override
@@ -83,7 +78,7 @@ public class Evaluation {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Evaluation other = (Evaluation) obj;
+        Grade other = (Grade) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -91,5 +86,6 @@ public class Evaluation {
             return false;
         return true;
     }
+
     
 }

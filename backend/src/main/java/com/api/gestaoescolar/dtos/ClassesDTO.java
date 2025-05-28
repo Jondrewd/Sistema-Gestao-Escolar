@@ -7,15 +7,15 @@ public class ClassesDTO {
 
     private Long id;
     private String name;
-    private List<Long> subjectIds = new ArrayList<>();
+    private List<Long> lessonIds = new ArrayList<>();
     private List<String> studentCpfs = new ArrayList<>();
 
     public ClassesDTO() {}
 
-    public ClassesDTO(Long id, String name, List<Long> subjectIds, List<String> studentCpfs) {
+    public ClassesDTO(Long id, String name, List<Long> lessonIds, List<String> studentCpfs) {
         this.id = id;
         this.name = name;
-        this.subjectIds = subjectIds != null ? subjectIds : new ArrayList<>();
+        this.lessonIds = lessonIds != null ? lessonIds : new ArrayList<>();
         this.studentCpfs = studentCpfs != null ? studentCpfs : new ArrayList<>();
     }
 
@@ -23,28 +23,28 @@ public class ClassesDTO {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public List<Long> getLessonIds() {
+        return lessonIds;
+    }
+
+    public List<String> getStudentCpfs() {
+        return studentCpfs;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public List<Long> getSubjectIds() {
-        return subjectIds;
-    }
-
-    public void setSubjectIds(List<Long> subjectIds) {
-        this.subjectIds = subjectIds != null ? subjectIds : new ArrayList<>();
-    }
-
-    public List<String> getStudentCpfs() {
-        return studentCpfs;
+    public void setLessonIds(List<Long> lessonIds) {
+        this.lessonIds = lessonIds != null ? lessonIds : new ArrayList<>();
     }
 
     public void setStudentCpfs(List<String> studentCpfs) {

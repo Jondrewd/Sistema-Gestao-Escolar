@@ -15,7 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "class_classes")  
+@Table(name = "classes")  
 public class Classes {
     
     @Id
@@ -24,23 +24,23 @@ public class Classes {
 
     private String name;
 
-    @OneToMany(mappedBy="classes",fetch = FetchType.LAZY)
-    private List<Subject> subject = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Lesson> lessons = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Student> students = new HashSet<>();
 
 
-     public Classes(Long id, String name, List<Subject> subject, Set<Student> students) {
+     public Classes(Long id, String name, List<Lesson> lessons, Set<Student> students) {
         this.id = id;
         this.name = name;
-        this.subject = subject;
+        this.lessons = lessons;
         this.students = students;
     }
 
 
-     public Classes(String name, List<Subject> subject) {
-        this(null, name, subject, null);
+     public Classes(String name, List<Lesson> lessons) {
+        this(null, name, lessons, null);
     }
 
     public Classes() {}
@@ -82,15 +82,15 @@ public class Classes {
         }
     }
 
-    public void addSubject(Subject subject) {
-        if (subject != null && !this.subject.contains(subject)) {
-            this.subject.add(subject);
+    public void addLesson(Lesson lessons) {
+        if (lessons != null && !this.lessons.contains(lessons)) {
+            this.lessons.add(lessons);
         }
     }
 
-    public void removeSubject(Subject subject) {
-        if (subject != null) {
-            this.subject.remove(subject);
+    public void removeLesson(Lesson lessons) {
+        if (lessons != null) {
+            this.lessons.remove(lessons);
         }
     }
    
@@ -120,13 +120,13 @@ public class Classes {
     }
 
 
-    public List<Subject> getSubjects() {
-        return subject;
+    public List<Lesson> getLessons() {
+        return lessons;
     }
 
 
-    public void setSubjects(List<Subject> subject) {
-        this.subject = subject;
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
     }
 
     public Object stream() {

@@ -14,6 +14,7 @@ import com.api.gestaoescolar.dtos.ClassScheduleDTO;
 import com.api.gestaoescolar.dtos.StudentDTO;
 import com.api.gestaoescolar.dtos.TeacherDTO;
 import com.api.gestaoescolar.dtos.UserDTO;
+import com.api.gestaoescolar.entities.Classes;
 import com.api.gestaoescolar.entities.Student;
 import com.api.gestaoescolar.entities.Teacher;
 import com.api.gestaoescolar.entities.User;
@@ -23,8 +24,12 @@ import com.api.gestaoescolar.repositories.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
+
+import com.api.gestaoescolar.entities.Enum.DayOfWeek;
 
 
 @Service
@@ -87,7 +92,6 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
 
-    // Métodos para Students
     @Transactional(readOnly = true)
     public Page<StudentDTO> findAllStudents(Pageable pageable) {
         Page<User> students = userRepository.findAllByUserType("STUDENT", pageable);
@@ -126,23 +130,25 @@ public class UserService implements UserDetailsService {
         return UserMapper.toStudentDTO((Student) updatedStudent);
     }
 
-        public List<ClassScheduleDTO> getClassScheduleForStudent(String cpf) {
-        Student student = userRepository.findStudentByCpf(cpf)
-            .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+      public List<ClassScheduleDTO> getClassScheduleForStudent(String cpf) {
+    Student student = userRepository.findStudentByCpf(cpf)
+        .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
-        return student.getClasses().getSubjects().stream()
-            .map(subject -> new ClassScheduleDTO(
-                subject.getName(),
-                subject.getDayOfWeek().getDisplayName(),
-                subject.getStartTime().toString(),
-                subject.getEndTime().toString()
-            ))
-            .collect(Collectors.toList());
+    Classes studentClass = student.getClasses();
+
+    return studentClass.getLessons().stream()
+        .map(lesson -> new ClassScheduleDTO(
+            lesson.getSubject().getName(),
+            lesson.getDayOfWeek().getDisplayName(),
+            lesson.getStartTime().toString(),
+            lesson.getEndTime().toString()
+        ))
+        .sorted(Comparator
+        .comparing((ClassScheduleDTO dto) -> DayOfWeek.valueOf(dto.getDayOfWeek().toUpperCase(Locale.ROOT)))
+        .thenComparing(ClassScheduleDTO::getStartTime))
+    .collect(Collectors.toList());
     }
 
-
-
-    // Métodos para Teachers
     @Transactional(readOnly = true)
     public Page<TeacherDTO> findAllTeachers(Pageable pageable) {
         Page<User> teachers = userRepository.findAllByUserType("TEACHER", pageable);

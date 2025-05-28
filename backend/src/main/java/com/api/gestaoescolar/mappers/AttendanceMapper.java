@@ -27,7 +27,6 @@ public class AttendanceMapper {
         if (attendance.getSubject() != null) {
             dto.setSubjectId(attendance.getSubject().getId());
             dto.setSubjectName(attendance.getSubject().getName());
-            dto.setSubjectName(attendance.getSubject().getTeacher().getFullName());
         }
 
         return dto;

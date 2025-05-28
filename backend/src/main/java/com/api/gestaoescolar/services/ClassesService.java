@@ -1,6 +1,5 @@
 package com.api.gestaoescolar.services;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,115 +15,82 @@ import com.api.gestaoescolar.exceptions.ResourceNotFoundException;
 import com.api.gestaoescolar.mappers.ClassesMapper;
 import com.api.gestaoescolar.repositories.*;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Service
 @Transactional
 public class ClassesService {
 
     private final ClassesRepository classesRepository;
     private final UserRepository userRepository;
-    private final SubjectRepository subjectRepository;
+    private final LessonRepository lessonRepository;
 
     public ClassesService(ClassesRepository classesRepository,
-                          UserRepository userRepository,
-                          SubjectRepository subjectRepository) {
+                        UserRepository userRepository,
+                        LessonRepository lessonRepository) {
         this.classesRepository = classesRepository;
         this.userRepository = userRepository;
-        this.subjectRepository = subjectRepository;
+        this.lessonRepository = lessonRepository;
     }
 
+    @Transactional
     public ClassesDTO createClass(ClassesDTO classesDTO) {
-        Classes newClass = ClassesMapper.toEntity(classesDTO);
-     List<Long> subjectIds = classesDTO.getSubjectIds();
-        List<Subject> subject = subjectRepository.findAllById(subjectIds);
+        Classes newClass = new Classes();
+        newClass.setName(classesDTO.getName());
 
-        if (subject.size() != subjectIds.size()) {
-            throw new EntityNotFoundException("Um ou mais cursos não encontrados com os IDs: " + subjectIds);
+        if (classesDTO.getLessonIds() != null && !classesDTO.getLessonIds().isEmpty()) {
+            List<Lesson> lessons = lessonRepository.findAllById(classesDTO.getLessonIds());
+            if (lessons.size() != classesDTO.getLessonIds().size()) {
+                throw new ResourceNotFoundException("Uma ou mais matérias não encontradas");
+            }
+            newClass.setLessons(lessons);
         }
-
-        newClass.setSubjects(subject);
 
         if (classesDTO.getStudentCpfs() != null && !classesDTO.getStudentCpfs().isEmpty()) {
-        List<Student> studentList = userRepository.findStudentsByCpf(classesDTO.getStudentCpfs()) 
-            .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
-        
-        if (studentList.isEmpty()) {
-            throw new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT");
+            Set<Student> students = userRepository.findStudentsByCpf(classesDTO.getStudentCpfs())
+                .orElseThrow(() -> new ResourceNotFoundException("Um ou mais alunos não encontrados"))
+                .stream()
+                .collect(Collectors.toSet());
+            newClass.setStudents(students);
         }
 
-    Set<Student> students = new HashSet<>(studentList);
-    newClass.setStudents(students);
-}
-
-
         Classes savedClass = classesRepository.save(newClass);
-
         return ClassesMapper.toDto(savedClass);
     }
 
+    @Transactional(readOnly = true)
     public ClassesDTO getClassById(Long id) {
-        Classes classes = classesRepository.findByIdWithRelations(id)
-                .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
+        Classes classes = classesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + id));
         return ClassesMapper.toDto(classes);
     }
 
+    @Transactional(readOnly = true)
     public Page<ClassesDTO> getAllClasses(Pageable pageable) {
-        return classesRepository.findAllWithRelations(pageable)
+        return classesRepository.findAll(pageable)
                 .map(ClassesMapper::toDto);
     }
 
     @Transactional
-    public ClassesDTO addStudentsToClass(Long classId, List<String> studentCpfs) {
-        Classes existingClass = classesRepository.findById(classId)
-                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + classId));
-
-        List<Student> studentsToAdd = userRepository.findStudentsByCpf(studentCpfs)
-                .orElseThrow(() -> new ResourceNotFoundException("Um ou mais alunos não encontrados"));
-
-        studentsToAdd.forEach(student -> {
-            if (!existingClass.getStudents().contains(student)) {
-                student.setClasses(existingClass);
-                existingClass.getStudents().add(student);
-            }
-        });
-
-        Classes updatedClass = classesRepository.save(existingClass);
-        return ClassesMapper.toDto(updatedClass);
-    }
-
     public ClassesDTO updateClass(Long id, ClassesDTO classesDTO) {
-        Classes existingClass = classesRepository.findByIdWithRelations(id)
-                .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
+        Classes existingClass = classesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + id));
 
-        existingClass.setName(classesDTO.getName());
-
-
-        List<Long> newSubjectIds = classesDTO.getSubjectIds();
-        List<Subject> newSubjects = subjectRepository.findAllById(newSubjectIds);
-
-        if (newSubjects.size() != newSubjectIds.size()) {
-            throw new EntityNotFoundException("Um ou mais cursos não encontrados com os IDs: " + newSubjectIds);
+        if (classesDTO.getName() != null) {
+            existingClass.setName(classesDTO.getName());
         }
 
-        List<Long> currentSubjectIds = existingClass.getSubjects().stream()
-            .map(Subject::getId)
-            .collect(Collectors.toList());
-
-        if (!currentSubjectIds.containsAll(newSubjectIds) || !newSubjectIds.containsAll(currentSubjectIds)) {
-            existingClass.setSubjects(newSubjects);
+        if (classesDTO.getLessonIds() != null) {
+            List<Lesson> lessons = lessonRepository.findAllById(classesDTO.getLessonIds());
+            if (lessons.size() != classesDTO.getLessonIds().size()) {
+                throw new ResourceNotFoundException("Uma ou mais matérias não encontradas");
+            }
+            existingClass.setLessons(lessons);
         }
 
-
-        List<String> currentStudentCpfs = existingClass.getStudents().stream()
-                .map(Student::getCpf)
-                .collect(Collectors.toList());
-
-        if (!currentStudentCpfs.equals(classesDTO.getStudentCpfs())) {
-            List<Student> newStudents = userRepository.findStudentsByCpf(classesDTO.getStudentCpfs())
-                    .orElseThrow(() -> new EntityNotFoundException("Um ou mais alunos não encontrados ou não são do tipo STUDENT"));
-            Set<Student> students = new HashSet<>(newStudents);
-
+        if (classesDTO.getStudentCpfs() != null) {
+            Set<Student> students = userRepository.findStudentsByCpf(classesDTO.getStudentCpfs())
+                .orElseThrow(() -> new ResourceNotFoundException("Um ou mais alunos não encontrados"))
+                .stream()
+                .collect(Collectors.toSet());
             existingClass.setStudents(students);
         }
 
@@ -132,19 +98,71 @@ public class ClassesService {
         return ClassesMapper.toDto(updatedClass);
     }
 
+    @Transactional
     public void deleteClass(Long id) {
-        Classes classes = classesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada com ID: " + id));
-        classesRepository.delete(classes);
+        if (!classesRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Turma não encontrada com ID: " + id);
+        }
+        classesRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<String> getStudentsInClass(Long classId) {
-    Classes classe = classesRepository.findByIdWithRelations(classId)
-            .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + classId));
-
-    return classe.getStudents().stream()
-            .map(Student::getCpf) 
-            .collect(Collectors.toList());
+        Classes classe = classesRepository.findById(classId)
+                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + classId));
+        
+        return classe.getStudents().stream()
+                .map(Student::getCpf)
+                .collect(Collectors.toList());
     }
 
+    @Transactional
+    public ClassesDTO addStudentsToClass(Long classId, List<String> studentCpfs) {
+        Classes existingClass = classesRepository.findById(classId)
+                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + classId));
+
+        if (studentCpfs == null || studentCpfs.isEmpty()) {
+            throw new IllegalArgumentException("Lista de CPFs não pode ser vazia");
+        }
+
+        Set<Student> studentsToAdd = userRepository.findStudentsByCpf(studentCpfs)
+                .orElseThrow(() -> new ResourceNotFoundException("Alunos não encontrados"))
+                .stream()
+                .collect(Collectors.toSet());
+
+        if (studentsToAdd.size() != studentCpfs.size()) {
+            List<String> foundCpfs = studentsToAdd.stream()
+                    .map(Student::getCpf)
+                    .collect(Collectors.toList());
+            
+            List<String> missingCpfs = studentCpfs.stream()
+                    .filter(cpf -> !foundCpfs.contains(cpf))
+                    .collect(Collectors.toList());
+            
+            throw new ResourceNotFoundException("Alunos não encontrados com os CPFs: " + missingCpfs);
+        }
+
+        existingClass.getStudents().addAll(studentsToAdd);
+        
+        Classes updatedClass = classesRepository.save(existingClass);
+        return ClassesMapper.toDto(updatedClass);
+    }  
+    @Transactional
+    public ClassesDTO removeStudentsFromClass(Long classId, List<String> studentCpfs) {
+        Classes existingClass = classesRepository.findById(classId)
+                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + classId));
+
+        if (studentCpfs == null || studentCpfs.isEmpty()) {
+            throw new IllegalArgumentException("Lista de CPFs não pode ser vazia");
+        }
+
+        Set<Student> studentsToRemove = existingClass.getStudents().stream()
+                .filter(student -> studentCpfs.contains(student.getCpf()))
+                .collect(Collectors.toSet());
+
+        existingClass.getStudents().removeAll(studentsToRemove);
+        
+        Classes updatedClass = classesRepository.save(existingClass);
+        return ClassesMapper.toDto(updatedClass);
+    }
 }

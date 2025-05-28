@@ -11,19 +11,19 @@ public class TeacherDTO {
     private String email;
     private String speciality;
     private Instant createdAt;
-    private List<SubjectDTO> subject; 
+    private List<LessonDTO> lesson; 
 
     public TeacherDTO() {}
 
     public TeacherDTO(Long id, String fullName, String cpf, String email, String speciality,
-                      Instant createdAt, List<SubjectDTO> subject) {
+                      Instant createdAt, List<LessonDTO> lesson) {
         this.id = id;
         this.fullName = fullName;
         this.cpf = cpf;
         this.email = email;
         this.speciality = speciality;
         this.createdAt = createdAt;
-        this.subject = subject;
+        this.lesson = lesson;
     }
     public String getFullName() {
         return fullName;
@@ -80,12 +80,12 @@ public class TeacherDTO {
         return usertype;
     }
 
-    public List<SubjectDTO> getSubjects() {
-        return subject;
+    public List<LessonDTO> getLessons() {
+        return lesson;
     }
 
-    public void setSubjects(List<SubjectDTO> subject) {
-        this.subject = subject;
+    public void setLessons(List<LessonDTO> lesson) {
+        this.lesson = lesson;
     }
 
     

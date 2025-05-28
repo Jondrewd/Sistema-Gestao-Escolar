@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.api.gestaoescolar.dtos.EvaluationDTO;
 import com.api.gestaoescolar.entities.Subject;
+import com.api.gestaoescolar.entities.Classes;
 import com.api.gestaoescolar.entities.Evaluation;
-import com.api.gestaoescolar.entities.Student;
 import com.api.gestaoescolar.exceptions.ResourceNotFoundException;
 import com.api.gestaoescolar.mappers.EvaluationMapper;
+import com.api.gestaoescolar.repositories.ClassesRepository;
 import com.api.gestaoescolar.repositories.EvaluationRepository;
-import com.api.gestaoescolar.repositories.UserRepository;
 import com.api.gestaoescolar.repositories.SubjectRepository;
 
 @Service
@@ -20,15 +20,15 @@ import com.api.gestaoescolar.repositories.SubjectRepository;
 public class EvaluationService {
 
     private final EvaluationRepository evaluationRepository;
-    private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
+    private final ClassesRepository classesRepository;
 
     public EvaluationService(EvaluationRepository evaluationRepository,
-                           UserRepository userRepository,
-                           SubjectRepository subjectRepository) {
+                           SubjectRepository subjectRepository,
+                           ClassesRepository classesRepository) {
         this.evaluationRepository = evaluationRepository;
-        this.userRepository = userRepository;
         this.subjectRepository = subjectRepository;
+        this.classesRepository = classesRepository;
     }
 
     @Transactional(readOnly = true)
@@ -46,17 +46,17 @@ public class EvaluationService {
 
     @Transactional
     public EvaluationDTO create(EvaluationDTO evaluationDTO) {
-        Evaluation evaluation = EvaluationMapper.toEntity(evaluationDTO);
+        Evaluation evaluation = new Evaluation();
+        evaluation.setDate(evaluationDTO.getDate());
 
-        Student student = (Student) userRepository.findByCpf(evaluationDTO.getStudent())
-            .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado: " + evaluationDTO.getStudent()));
-        
         Subject subject = subjectRepository.findById(evaluationDTO.getSubjectId())
-            .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com ID: " + evaluationDTO.getSubjectId()));
-        
-        evaluation.setStudent(student);
+            .orElseThrow(() -> new ResourceNotFoundException("Matéria não encontrada com ID: " + evaluationDTO.getSubjectId()));
         evaluation.setSubject(subject);
-        
+
+        Classes classes = classesRepository.findById(evaluationDTO.getClassId())
+            .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + evaluationDTO.getClassId()));
+        evaluation.setClasses(classes);
+
         Evaluation savedEvaluation = evaluationRepository.save(evaluation);
         return EvaluationMapper.toDto(savedEvaluation);
     }
@@ -69,22 +69,17 @@ public class EvaluationService {
         if (evaluationDTO.getDate() != null) {
             existingEvaluation.setDate(evaluationDTO.getDate());
         }
-        if (evaluationDTO.getScore() != null) {
-            existingEvaluation.setScore(evaluationDTO.getScore());
-        }
 
-        if (evaluationDTO.getStudent() != null && 
-            !evaluationDTO.getStudent().equals(existingEvaluation.getStudent().getCpf())) {
-            Student student = (Student) userRepository.findByCpf(evaluationDTO.getStudent())
-                .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado: " + evaluationDTO.getStudent()));
-            existingEvaluation.setStudent(student);
-        }
-
-        if (evaluationDTO.getSubjectId() != null && 
-            !evaluationDTO.getSubjectId().equals(existingEvaluation.getSubject().getId())) {
+        if (evaluationDTO.getSubjectId() != null) {
             Subject subject = subjectRepository.findById(evaluationDTO.getSubjectId())
-                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com ID: " + evaluationDTO.getSubjectId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Matéria não encontrada com ID: " + evaluationDTO.getSubjectId()));
             existingEvaluation.setSubject(subject);
+        }
+
+        if (evaluationDTO.getClassId() != null) {
+            Classes classes = classesRepository.findById(evaluationDTO.getClassId())
+                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com ID: " + evaluationDTO.getClassId()));
+            existingEvaluation.setClasses(classes);
         }
 
         Evaluation updatedEvaluation = evaluationRepository.save(existingEvaluation);
