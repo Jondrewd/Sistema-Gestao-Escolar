@@ -3,64 +3,112 @@ import './GradeForm.css';
 import api from '../../Service/Api';
 
 const GradeForm = ({ classId }) => {
-  const [students, setStudents] = useState([]);
+  const [studentCpfs, setStudentCpfs] = useState([]);
+  const [studentData, setStudentData] = useState({});
   const [grades, setGrades] = useState({});
+  const [evaluations, setEvaluations] = useState([]);
+  const [selectedEvaluation, setSelectedEvaluation] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchClassData = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/classes/${classId}/students`);
-        setStudents(response.data);
         
-        // Inicializa grades com os valores existentes
-        const initialGrades = response.data.reduce((acc, student) => {
-          acc[student.id] = student.grade || '';
+        const classResponse = await api.get(`/classes/${classId}`);
+        const classData = classResponse.data;
+        
+        const evaluationsResponse = await api.get(`/evaluations/class/${classId}`);
+        const evaluationsData = evaluationsResponse.data?.content || [];
+
+        setEvaluations(evaluationsData);
+        setStudentCpfs(classData.studentCpfs);
+        
+        const studentsInfo = {};
+        for (const cpf of classData.studentCpfs) {
+          const studentResponse = await api.get(`/students/${cpf}`);
+          studentsInfo[cpf] = studentResponse.data;
+        }
+        setStudentData(studentsInfo);
+        
+        const initialGrades = classData.studentCpfs.reduce((acc, cpf) => {
+          acc[cpf] = '';
           return acc;
         }, {});
         setGrades(initialGrades);
+        
+        if (evaluationsData.length > 0) {
+          setSelectedEvaluation(evaluationsData[0].id);
+        }
       } catch (err) {
-        console.error('Erro ao carregar alunos:', err);
-        setError('Erro ao carregar lista de alunos');
+        console.error('Erro ao carregar dados:', err);
+        setError('Erro ao carregar dados da turma');
       } finally {
         setLoading(false);
       }
     };
 
     if (classId) {
-      fetchStudents();
+      fetchClassData();
     }
   }, [classId]);
 
-  const handleGradeChange = (studentId, value) => {
-    // Validação básica do valor
+  const handleGradeChange = (cpf, value) => {
     const numericValue = parseFloat(value);
-    if (value === '' || (numericValue >= 0 && numericValue <= 10)) {
+    if (value === '' || (!isNaN(numericValue) && numericValue >= 0 && numericValue <= 10)) {
       setGrades(prev => ({
         ...prev,
-        [studentId]: value
+        [cpf]: value
       }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!selectedEvaluation) {
+      alert('Selecione uma avaliação antes de salvar');
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
-      // Filtra apenas as grades que foram alteradas
-      const gradesToSend = Object.entries(grades).reduce((acc, [studentId, grade]) => {
-        if (grade !== '') {
-          acc.push({ studentId, grade: parseFloat(grade) });
-        }
-        return acc;
-      }, []);
+      const selectedEvalData = evaluations.find(e => e.id === selectedEvaluation);
+      
+      if (!selectedEvalData) {
+        throw new Error('Avaliação selecionada não encontrada');
+      }
 
-      await api.post(`/classes/${classId}/grades`, { grades: gradesToSend });
+      const gradesToSend = Object.entries(grades)
+        .filter(([_, grade]) => grade !== '')
+        .map(([cpf, grade]) => ({
+          evaluation: { 
+            id: selectedEvalData.id,
+            date: selectedEvalData.date,
+            subjectId: selectedEvalData.subjectId,
+            subjectName: selectedEvalData.subjectName,
+            classId: selectedEvalData.classId
+          },
+          student: cpf,
+          score: parseFloat(grade)
+        }));
+
+      if (gradesToSend.length === 0) {
+        alert('Nenhuma nota para salvar');
+        return;
+      }
+
+      await api.post(`/grades`, gradesToSend);
       alert('Notas salvas com sucesso!');
+      
+      const resetGrades = studentCpfs.reduce((acc, cpf) => {
+        acc[cpf] = '';
+        return acc;
+      }, {});
+      setGrades(resetGrades);
     } catch (err) {
       console.error('Erro ao salvar notas:', err);
       alert('Erro ao salvar notas. Tente novamente.');
@@ -70,46 +118,71 @@ const GradeForm = ({ classId }) => {
   };
 
   if (loading) {
-    return <div className="loading">Carregando alunos...</div>;
+    return <div className="loading">Carregando dados da turma...</div>;
   }
 
   if (error) {
     return <div className="error">{error}</div>;
   }
 
-  if (students.length === 0) {
+  if (studentCpfs.length === 0) {
     return <div className="empty-state">Nenhum aluno encontrado nesta turma</div>;
+  }
+
+  if (evaluations.length === 0) {
+    return <div className="empty-state">Nenhuma avaliação encontrada para esta turma</div>;
   }
 
   return (
     <form onSubmit={handleSubmit} className="grade-form">
-      <table>
-        <thead>
-          <tr>
-            <th>Aluno</th>
-            <th>Nota (0-10)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(student => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>
-                <input
-                  type="number"
-                  min="0"
-                  max="10"
-                  step="0.1"
-                  value={grades[student.id] || ''}
-                  onChange={(e) => handleGradeChange(student.id, e.target.value)}
-                  placeholder="Digite a nota"
-                  disabled={isSubmitting}
-                />
-              </td>
-            </tr>
+      <div className="form-control">
+        <label htmlFor="evaluation">Avaliação:</label>
+        <select
+          id="evaluation"
+          value={selectedEvaluation}
+          onChange={(e) => setSelectedEvaluation(e.target.value)}
+          disabled={isSubmitting}
+          required
+        >
+          {evaluations.map(evaluation => (
+            <option key={evaluation.id} value={evaluation.id}>
+              {evaluation.subjectName} - {new Date(evaluation.date).toLocaleDateString('pt-BR')}
+            </option>
           ))}
-        </tbody>
-      </table>
+        </select>
+      </div>
+
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Aluno</th>
+              <th>CPF</th>
+              <th>Nota (0-10)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {studentCpfs.map(cpf => (
+              <tr key={cpf}>
+                <td>{studentData[cpf]?.fullName || 'Carregando...'}</td>
+                <td>{cpf}</td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={grades[cpf] || ''}
+                    onChange={(e) => handleGradeChange(cpf, e.target.value)}
+                    placeholder="0.0"
+                    disabled={isSubmitting}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       
       <button 
         type="submit" 

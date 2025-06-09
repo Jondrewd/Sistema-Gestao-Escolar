@@ -56,6 +56,57 @@
   background-color: var(--primary-dark);
 }
 
+.form-control {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.form-control label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.875rem;
+}
+
+.form-control select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  background-color: #ffffff;
+  color: #1a202c;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.5em 1.5em;
+}
+
+.form-control select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-control select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: #f9fafb;
+}
+
+.form-control select option {
+  padding: 0.5rem;
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+.form-control select option:hover {
+  background-color: #f3f4f6;
+}
 @media (max-width: 768px) {
   .grade-form th, .grade-form td {
     padding: 8px 10px;

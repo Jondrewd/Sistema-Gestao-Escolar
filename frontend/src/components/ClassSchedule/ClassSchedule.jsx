@@ -1,35 +1,52 @@
 import { useState, useEffect } from 'react';
 import './ClassSchedule.css';
+import api from '../../Service/Api';
 
 const ClassSchedule = ({ detailed = false }) => {
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [classId, setClassId] = useState(null);
 
   useEffect(() => {
-    try {
-      setLoading(true);
-      const userData = JSON.parse(sessionStorage.getItem('userData'));
-      
-      if (!userData || !userData.classes) {
-        throw new Error('Dados de turmas não encontrados');
-      }
+    const fetchStudentAndSchedule = async () => {
+      try {
+        setLoading(true);
+        const cpf = sessionStorage.getItem('cpf');
+        
+        if (!cpf) {
+          throw new Error('CPF não encontrado na sessão');
+        }
 
-      const formattedSchedule = formatClassesData(userData.classes);
-      setSchedule(formattedSchedule);
-    } catch (err) {
-      console.error('Erro ao carregar horário:', err);
-      setError('Erro ao carregar horário. Tente novamente.');
-    } finally {
-      setLoading(false);
-    }
+        const studentRaw = sessionStorage.getItem('userData');
+        const student = JSON.parse(studentRaw);
+        const studentClassId = student.classeId;
+        
+        if (!studentClassId) {
+          throw new Error('Aluno não está matriculado em nenhuma turma');
+        }
+
+        setClassId(studentClassId);
+
+        const scheduleResponse = await api.get(`classes/${studentClassId}/schedule`);
+        const formattedSchedule = formatScheduleData(scheduleResponse.data);
+        setSchedule(formattedSchedule);
+      } catch (err) {
+        console.error('Erro ao carregar horário:', err);
+        setError(err.message || 'Erro ao carregar horário. Tente novamente.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudentAndSchedule();
   }, []);
 
-  const formatClassesData = (classes) => {
-    if (!classes || classes.length === 0) return [];
+  const formatScheduleData = (apiData) => {
+    if (!apiData || apiData.length === 0) return [];
     
-    const scheduleByTime = classes.reduce((acc, classItem) => {
-      const timeSlot = `${classItem.startTime} - ${classItem.endTime}`;
+    const scheduleByTime = apiData.reduce((acc, item) => {
+      const timeSlot = `${item.startTime} - ${item.endTime}`;
       
       if (!acc[timeSlot]) {
         acc[timeSlot] = {
@@ -42,30 +59,34 @@ const ClassSchedule = ({ detailed = false }) => {
         };
       }
       
-      classItem.weekDays.forEach(weekDay => {
-        switch(weekDay.toLowerCase()) {
-          case 'segunda':
-            acc[timeSlot].mon = classItem.subject;
-            break;
-          case 'terça':
-            acc[timeSlot].tue = classItem.subject;
-            break;
-          case 'quarta':
-            acc[timeSlot].wed = classItem.subject;
-            break;
-          case 'quinta':
-            acc[timeSlot].thu = classItem.subject;
-            break;
-          case 'sexta':
-            acc[timeSlot].fri = classItem.subject;
-            break;
-        }
-      });
+      switch(item.dayOfWeek) {
+        case 'SEGUNDA_FEIRA':
+          acc[timeSlot].mon = item.subjectName;
+          break;
+        case 'TERCA_FEIRA':
+          acc[timeSlot].tue = item.subjectName;
+          break;
+        case 'QUARTA_FEIRA':
+          acc[timeSlot].wed = item.subjectName;
+          break;
+        case 'QUINTA_FEIRA':
+          acc[timeSlot].thu = item.subjectName;
+          break;
+        case 'SEXTA_FEIRA':
+          acc[timeSlot].fri = item.subjectName;
+          break;
+        default:
+          console.warn(`Dia da semana não reconhecido: ${item.dayOfWeek}`);
+      }
       
       return acc;
     }, {});
     
-    return Object.values(scheduleByTime);
+    return Object.values(scheduleByTime).sort((a, b) => {
+      const timeA = a.time.split(' - ')[0];
+      const timeB = b.time.split(' - ')[0];
+      return timeA.localeCompare(timeB);
+    });
   };
 
   const getTodaysClass = (scheduleItem) => {
@@ -89,7 +110,7 @@ const ClassSchedule = ({ detailed = false }) => {
   }
 
   if (schedule.length === 0) {
-    return <div className="empty-state">Nenhuma turma matriculada</div>;
+    return <div className="empty-state">Nenhuma aula agendada para esta turma</div>;
   }
 
   return (
@@ -110,27 +131,18 @@ const ClassSchedule = ({ detailed = false }) => {
             {schedule.map((item, index) => (
               <tr key={index}>
                 <td>{item.time}</td>
-                <td>
-                  {item.mon && <div className="subject">{item.mon}</div>}
-                </td>
-                <td>
-                  {item.tue && <div className="subject">{item.tue}</div>}
-                </td>
-                <td>
-                  {item.wed && <div className="subject">{item.wed}</div>}
-                </td>
-                <td>
-                  {item.thu && <div className="subject">{item.thu}</div>}
-                </td>
-                <td>
-                  {item.fri && <div className="subject">{item.fri}</div>}
-                </td>
+                <td>{item.mon && <div className="subject">{item.mon}</div>}</td>
+                <td>{item.tue && <div className="subject">{item.tue}</div>}</td>
+                <td>{item.wed && <div className="subject">{item.wed}</div>}</td>
+                <td>{item.thu && <div className="subject">{item.thu}</div>}</td>
+                <td>{item.fri && <div className="subject">{item.fri}</div>}</td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
         <div className="compact-schedule">
+          <h3>Horário da Turma {classId}</h3>
           {schedule.slice(0, 3).map((item, index) => {
             const todaysClass = getTodaysClass(item);
             return (

@@ -4,28 +4,30 @@ import './GradeReport.css';
 const GradeReport = () => {
   const [grades, setGrades] = useState([]);
   const [average, setAverage] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     try {
       const userData = JSON.parse(sessionStorage.getItem('userData'));
-      
-      if (!userData || !userData.evaluations) {
-        throw new Error('Dados de avaliações não encontrados');
+
+      if (!userData) {
+        throw new Error('Dados do aluno não encontrados');
       }
 
-      const processedGrades = userData.evaluations.map(evaluation => ({
-        subject: evaluation.subject || 'Disciplina não informada',
-        grade: evaluation.grade || 0,
-        teacher: evaluation.teacher || 'Professor não informado'
-      }));
+      const processedGrades = userData.grades?.map(gradeItem => ({
+        subject: gradeItem.evaluation?.subjectName || 'Disciplina não informada',
+        grade: gradeItem.score || 0,
+        date: gradeItem.evaluation?.date
+          ? new Date(gradeItem.evaluation.date).toLocaleDateString('pt-BR')
+          : 'Data não informada',
+        teacher: 'Professor não informado' 
+      })) || [];
 
       setGrades(processedGrades);
 
       if (processedGrades.length > 0) {
-        const validGrades = processedGrades.filter(g => !isNaN(parseFloat(g.grade)));
-        const sum = validGrades.reduce((total, g) => total + parseFloat(g.grade), 0);
+        const validGrades = processedGrades.filter(g => !isNaN(g.grade));
+        const sum = validGrades.reduce((total, g) => total + g.grade, 0);
         const avg = validGrades.length > 0 ? sum / validGrades.length : 0;
         setAverage(avg);
       }
@@ -34,6 +36,7 @@ const GradeReport = () => {
       setError('Erro ao carregar boletim');
     }
   }, []);
+
 
   const getStatus = (grade) => {
     const numericGrade = parseFloat(grade);
@@ -68,6 +71,7 @@ const GradeReport = () => {
             <th>Nota</th>
             <th>Professor</th>
             <th>Situação</th>
+            <th>Data</th>
           </tr>
         </thead>
         <tbody>
@@ -87,6 +91,7 @@ const GradeReport = () => {
                     {status}
                   </span>
                 </td>
+                <td>{item.date}</td>
               </tr>
             );
           })}

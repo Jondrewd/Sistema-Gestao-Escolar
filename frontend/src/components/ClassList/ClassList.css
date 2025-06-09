@@ -1,0 +1,102 @@
+.class-list {
+  padding: 20px;
+}
+
+.class-list h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.class-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.class-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.class-card.selected {
+  border: 2px solid #4CAF50;
+  background-color: #f8fff8;
+}
+
+.class-card h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 1px solid #eee;
+
+}
+
+.class-meta {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.class-lessons h4 {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.class-lessons ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.class-lessons li {
+  border-bottom: 1px dashed #eee;
+}
+
+.lesson-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lesson-info strong {
+  font-size: 13px;
+  color: #2c3e50;
+}
+
+.lesson-schedule {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: #666;
+}
+
+.loading, .empty-state, .error {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error {
+  color: #e74c3c;
+}
+
+.empty-state {
+  color: #7f8c8d;
+}
+
+.fas, .far {
+  margin-right: 5px;
+  width: 14px;
+  color: #95a5a6;
+}

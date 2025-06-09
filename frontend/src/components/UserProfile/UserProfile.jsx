@@ -22,7 +22,7 @@ const UserProfile = ({ user }) => {
     return `${parts[0].charAt(0)}${parts[parts.length - 1].charAt(0)}`.toUpperCase();
   };
 
-  const userName = user?.name || (user?.userType === 'teacher' ? 'Professor' : 'Aluno');
+  const userName = user?.name || (user?.userType == 'teacher' ? 'Professor' : 'Aluno');
   const userEmail = user?.email || 'email@escola.com';
 
   return (

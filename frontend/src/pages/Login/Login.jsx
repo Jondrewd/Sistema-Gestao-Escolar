@@ -22,9 +22,10 @@ const Login = () => {
       password
     });
 
-    const { acessToken, refreshToken } = response.data;
+    const { acessToken, refreshToken, userType } = response.data;
 
     sessionStorage.setItem('cpf', cpf);
+    sessionStorage.setItem('userType', userType);
     sessionStorage.setItem('acessToken', acessToken);
     sessionStorage.setItem('refreshToken', refreshToken);
 

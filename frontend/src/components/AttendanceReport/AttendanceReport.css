@@ -1,0 +1,74 @@
+.attendance-report {
+  width: 100%;
+}
+
+.attendance-percentage {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: var(--primary-color);
+}
+
+.attendance-status {
+  font-weight: 500;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.attendance-table th {
+  background-color: var(--secondary-color);
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.attendance-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.progress-container {
+  position: relative;
+  height: 24px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.progress-bar.good {
+  background-color: var(--success-color);
+}
+
+.progress-bar.medium {
+  background-color: var(--warning-color);
+}
+
+.progress-bar.bad {
+  background-color: var(--error-color);
+}
+
+.percentage-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  line-height: 24px;
+  color: white;
+  font-weight: 500;
+  font-size: 12px;
+}

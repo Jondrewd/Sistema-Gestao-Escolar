@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login  from './pages/Login/Login'
 import Register from './pages/Register/Register';
+import Dashboard from './pages/Dashboard/Dashboard';
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </div>
     </Router>
@@ -32,5 +36,23 @@ Preciso criar:
   Relatórios
   Geração de boletins em PDF
 
+
+  Tela de Login
+
+Dashboard do Professor:
+
+Listar turmas, lançar notas, registrar presenças
+
+Dashboard do Aluno:
+
+Visualizar boletim e frequência
+
+Tela de Cadastro (Admin):
+
+Criar novos usuários (aluno/professor/admin)
+
+Gerenciamento de Turmas e Disciplinas
+
+Página de Relatórios
 */ 
 
