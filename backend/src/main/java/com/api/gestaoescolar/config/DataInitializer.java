@@ -14,16 +14,17 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initRoles(RolesRepository roleRepository) {
         return args -> {
-            if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
-                Roles roleAdmin = new Roles();
-                roleAdmin.setName("ROLE_ADMIN");
-                roleRepository.save(roleAdmin);
-            }
-            if (roleRepository.findByName("ROLE_USER").isEmpty()) {
-                Roles roleUser = new Roles();
-                roleUser.setName("ROLE_USER");
-                roleRepository.save(roleUser);
-            }
+            createRoleIfNotExists(roleRepository, "ROLE_ADMIN");
+            createRoleIfNotExists(roleRepository, "ROLE_TEACHER");
+            createRoleIfNotExists(roleRepository, "ROLE_STUDENT");
         };
+    }
+
+    private void createRoleIfNotExists(RolesRepository repository, String roleName) {
+        if (repository.findByName(roleName).isEmpty()) {
+            Roles role = new Roles();
+            role.setName(roleName);
+            repository.save(role);
+        }
     }
 }

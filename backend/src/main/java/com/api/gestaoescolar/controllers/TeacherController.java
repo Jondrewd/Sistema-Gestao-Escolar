@@ -1,11 +1,22 @@
 package com.api.gestaoescolar.controllers;
 
+import java.net.URI;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.gestaoescolar.dtos.TeacherDTO;
@@ -18,103 +29,80 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
-import java.net.URI;
-
-@Tag(
-    name = "Gerenciamento de Professores", 
-    description = "Endpoint para operações específicas de professores do sistema"
-)
+@Tag(name = "Gerenciamento de Professores", description = "Endpoint para operações relacionadas a professores")
 @RestController
 @RequestMapping("/api/v1/teachers")
+@SecurityRequirement(name = "bearerAuth")
 public class TeacherController {
 
-    private final UserService service;
+    private final UserService userService;
 
-    public TeacherController(UserService service) {
-        this.service = service;
+    public TeacherController(UserService userService) {
+        this.userService = userService;
     }
 
-    @Operation(
-        summary = "Listar professores com paginação",
-        description = "Retorna uma lista paginada de todos os professores cadastrados no sistema."
-    )
+    @Operation(summary = "Listar professores paginados", description = "Retorna todos os professores com paginação. Acesso: ADMIN ou TEACHER")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Lista de professores retornada com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Parâmetros de paginação inválidos")
+        @ApiResponse(responseCode = "200", description = "Professores listados com sucesso"),
+        @ApiResponse(responseCode = "403", description = "Acesso negado", content = @Content)
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public ResponseEntity<Page<TeacherDTO>> findAll(
-            @Parameter(description = "Número da página (0-based)", example = "0") 
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            
-            @Parameter(description = "Quantidade de itens por página", example = "10") 
-            @RequestParam(value = "size", defaultValue = "12") Integer size,
-            
-            @Parameter(description = "Direção da ordenação (asc/desc)", example = "asc") 
-            @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            
-            @Parameter(description = "Campo para ordenação", example = "cpf") 
-            @RequestParam(value = "sort", defaultValue = "cpf") String sort) {
-        
-        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
-        return ResponseEntity.ok(service.findAllTeachers(pageable));
+            @Parameter(description = "Número da página (0-based)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Itens por página", example = "10") @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Campo de ordenação", example = "name") @RequestParam(defaultValue = "name") String sort) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return ResponseEntity.ok(userService.findAllTeachers(pageable));
     }
 
-    @Operation(
-        summary = "Buscar professores por especialidade",
-        description = "Recupera a lista de professores com base na sua especialidade."
-    )
+    @Operation(summary = "Buscar professores por especialidade", description = "Filtra professores por área de atuação. Acesso: ADMIN ou TEACHER")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Professores encontrados com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Nenhum professor encontrado com a especialidade informada"),
-            @ApiResponse(responseCode = "400", description = "Especialidade inválida")
+        @ApiResponse(responseCode = "200", description = "Professores encontrados"),
+        @ApiResponse(responseCode = "404", description = "Nenhum professor encontrado", content = @Content)
     })
     @GetMapping("/speciality/{speciality}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public ResponseEntity<Page<TeacherDTO>> findBySpeciality(
-            @Parameter(description = "Especialidade do professor", example = "Matemática") 
-            @PathVariable String speciality,
+            @Parameter(description = "Especialidade (ex: Matemática)", required = true) @PathVariable String speciality,
             Pageable pageable) {
-        Page<TeacherDTO> teachers = service.findBySpeciality(speciality, pageable);
-        return ResponseEntity.ok(teachers);
-    }
-    @Operation(
-        summary = "Buscar professor por Cpf",
-        description = "Recupera os detalhes de um professor específico com base no seu Cpf."
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Estudante encontrado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Estudante não encontrado"),
-        @ApiResponse(responseCode = "400", description = "Cpf inválido")
-    })
-    @GetMapping("/{cpf}")
-    public ResponseEntity<TeacherDTO> findByCpf(
-            @Parameter(description = "Cpf do professor (apenas números)", example = "123.456.789-01") 
-            @PathVariable String cpf) {
-        return ResponseEntity.ok(service.findTeacherByCpf(cpf));
+
+        return ResponseEntity.ok(userService.findBySpeciality(speciality, pageable));
     }
 
-    @Operation(
-        summary = "Criar novo professor",
-        description = "Cadastra um novo professor no sistema com os dados fornecidos."
-    )
+    @Operation(summary = "Buscar professor por CPF", description = "Recupera um professor específico. Acesso: ADMIN ou o próprio professor")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Professor encontrado"),
+        @ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content)
+    })
+    @GetMapping("/{cpf}")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and #cpf == principal.username)")
+    public ResponseEntity<TeacherDTO> findByCpf(
+            @Parameter(description = "CPF do professor (somente números)", example = "12345678901") @PathVariable String cpf) {
+
+        return ResponseEntity.ok(userService.findTeacherByCpf(cpf));
+    }
+
+    @Operation(summary = "Criar professor", description = "Cadastra um novo professor. Acesso exclusivo para ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Professor criado com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados do professor inválidos"),
-        @ApiResponse(responseCode = "409", description = "Professor já existe")
+        @ApiResponse(responseCode = "409", description = "CPF já cadastrado", content = @Content)
     })
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-        description = "Dados do novo professor",
-        required = true,
-        content = @Content(
-            schema = @Schema(implementation = TeacherDTO.class)
-        )
-    )
     @PostMapping
-    public ResponseEntity<TeacherDTO> insert(@RequestBody UserDTO teacher) {
-        TeacherDTO createdTeacher = service.createTeacher(teacher);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<TeacherDTO> create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = "Dados do professor",
+                required = true,
+                content = @Content(schema = @Schema(implementation = TeacherDTO.class))
+            ) @Valid @RequestBody UserDTO teacherDTO) {
+
+        TeacherDTO createdTeacher = userService.createTeacher(teacherDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{cpf}")
                 .buildAndExpand(createdTeacher.getCpf())
@@ -122,45 +110,31 @@ public class TeacherController {
         return ResponseEntity.created(uri).body(createdTeacher);
     }
 
-    @Operation(
-        summary = "Atualizar professor",
-        description = "Atualiza os dados de um professor existente com base no CPF fornecido."
-    )
+    @Operation(summary = "Atualizar professor", description = "Atualiza dados do professor. Acesso: ADMIN ou o próprio professor")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Professor atualizado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Professor não encontrado"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos")
+        @ApiResponse(responseCode = "200", description = "Professor atualizado"),
+        @ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content)
     })
     @PutMapping("/{cpf}")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and #cpf == principal.username)")
     public ResponseEntity<TeacherDTO> update(
-            @Parameter(description = "CPF do professor a ser atualizado", example = "98765432109") 
-            @PathVariable String cpf, 
-            
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                description = "Dados atualizados do professor",
-                required = true,
-                content = @Content(
-                    schema = @Schema(implementation = TeacherDTO.class)
-                )
-            )
-            @RequestBody TeacherDTO teacher) {
-        return ResponseEntity.ok(service.updateTeacher(cpf, teacher));
+            @Parameter(description = "CPF do professor", example = "12345678901") @PathVariable String cpf,
+            @Valid @RequestBody TeacherDTO teacherDTO) {
+
+        return ResponseEntity.ok(userService.updateTeacher(cpf, teacherDTO));
     }
 
-    @Operation(
-        summary = "Remover professor",
-        description = "Remove permanentemente um professor do sistema com base no CPF fornecido."
-    )
+    @Operation(summary = "Remover professor", description = "Remove um professor do sistema. Acesso exclusivo para ADMIN")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Professor removido com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Professor não encontrado"),
-        @ApiResponse(responseCode = "400", description = "CPF inválido")
+        @ApiResponse(responseCode = "204", description = "Professor removido"),
+        @ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content)
     })
     @DeleteMapping("/{cpf}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(
-            @Parameter(description = "CPF do professor a ser removido", example = "98765432109") 
-            @PathVariable String cpf) {
-        service.deleteByCpf(cpf);
+            @Parameter(description = "CPF do professor", example = "12345678901") @PathVariable String cpf) {
+
+        userService.deleteByCpf(cpf);
         return ResponseEntity.noContent().build();
     }
 }
