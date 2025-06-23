@@ -1,0 +1,178 @@
+.class-manager {
+  width: 100%;
+  padding: 20px;
+}
+
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.manager-header h2 {
+  color: var(--admin-dark);
+  font-size: 18px;
+  margin: 0;
+}
+
+.add-button {
+  background-color: var(--admin-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.add-button:hover {
+  background-color: var(--admin-dark);
+}
+
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.class-card {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.class-card:hover {
+  box-shadow: var(--box-shadow);
+  transform: translateY(-2px);
+}
+
+.class-card.selected {
+  border-color: var(--admin-color);
+  background-color: rgba(106, 27, 154, 0.05);
+}
+
+.class-info h3 {
+  margin: 0 0 8px 0;
+  color: var(--admin-color);
+  font-size: 16px;
+}
+
+.class-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.class-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.edit-button {
+  background-color: var(--admin-light);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.edit-button:hover {
+  background-color: var(--admin-color);
+}
+
+.delete-button {
+  background-color: var(--error-color);
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-actions .confirm-button {
+  background-color: #4299e1;
+  color: white;
+  border: none;
+}
+
+
+@media (max-width: 768px) {
+  .manager-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .class-grid {
+    grid-template-columns: 1fr;
+  }
+}

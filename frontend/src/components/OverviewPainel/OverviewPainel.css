@@ -1,0 +1,142 @@
+.overview-panel {
+  width: 100%;
+  padding: 20px;
+}
+
+.overview-panel h2 {
+  color: var(--admin-dark);
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.stat-card h3 {
+  margin: 0 0 10px 0;
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--admin-dark);
+  margin-bottom: 5px;
+}
+
+.stat-trend {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.stat-trend.positive {
+  color: var(--success-color);
+}
+
+.stat-trend.negative {
+  color: var(--error-color);
+}
+
+.stat-trend.neutral {
+  color: var(--warning-color);
+}
+
+.activity-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.activity-section h3 {
+  margin: 0 0 15px 0;
+  color: var(--admin-color);
+  font-size: 16px;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.activity-icon {
+  color: var(--admin-color);
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.activity-details {
+  flex: 1;
+}
+
+.activity-action {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.action-text {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.action-target {
+  color: var(--admin-color);
+  font-weight: 500;
+}
+
+.activity-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.activity-user {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .activity-action {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

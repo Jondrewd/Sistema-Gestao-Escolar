@@ -1,0 +1,186 @@
+.user-manager {
+  width: 100%;
+  padding: 20px;
+}
+
+.manager-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.manager-header h2 {
+  color: var(--admin-dark);
+  font-size: 18px;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: var(--admin-light);
+}
+
+.filter-btn.active {
+  background-color: var(--admin-color);
+  color: white;
+  border-color: var(--admin-color);
+}
+
+.add-button {
+  background-color: var(--admin-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.add-button:hover {
+  background-color: var(--admin-dark);
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.user-table th {
+  background-color: var(--admin-color);
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.user-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.user-table tr:last-child td {
+  border-bottom: none;
+}
+
+.user-table tr:hover {
+  background-color: rgba(106, 27, 154, 0.03);
+}
+
+.user-table tr.selected {
+  background-color: rgba(106, 27, 154, 0.05);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--admin-light);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--success-color);
+}
+
+.status-badge.inactive {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: var(--error-color);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions .edit-button {
+  background-color: var(--admin-light);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.actions .edit-button:hover {
+  background-color: var(--admin-color);
+}
+
+.actions .delete-button {
+  background-color: var(--error-color);
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actions .delete-button:hover {
+  background-color: #d32f2f;
+}
+
+@media (max-width: 768px) {
+  .user-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-controls {
+    flex-wrap: wrap;
+  }
+}

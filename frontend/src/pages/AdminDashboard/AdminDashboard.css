@@ -1,0 +1,128 @@
+:root {
+  --admin-color: #6a1b9a;
+  --admin-dark: #4a148c;
+  --admin-light: #9c4dcc;
+  --secondary-color: #f5f5f5;
+  --text-color: #333;
+  --text-light: #666;
+  --border-color: #e0e0e0;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --border-radius: 6px;
+  --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.dashboard-admin-header {
+  background-color: var(--admin-color);
+  color: white;
+  padding: 0 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-admin-header h1 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 15px 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--admin-light);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.dashboard-container {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  width: 240px;
+  background-color: white;
+  border-right: 1px solid var(--border-color);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 0;
+}
+
+.nav-item {
+  padding: 12px 20px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-color);
+  transition: all 0.2s;
+}
+
+.nav-item:hover {
+  background-color: rgba(106, 27, 154, 0.1);
+}
+
+.nav-item.active {
+  background-color: rgba(106, 27, 154, 0.1);
+  color: var(--admin-color);
+  font-weight: 500;
+  border-left: 3px solid var(--admin-color);
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: white;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  
+  .nav-item {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .nav-item.active {
+    border-left: none;
+    border-bottom: 3px solid var(--admin-color);
+  }
+}

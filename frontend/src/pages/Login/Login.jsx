@@ -11,39 +11,75 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError('');
-
-  try {
-    const response = await api.post('/auth/login', {
-      cpf,
-      password
-    });
-
-    const { acessToken, refreshToken, userType } = response.data;
-
-    sessionStorage.setItem('cpf', cpf);
-    sessionStorage.setItem('userType', userType);
-    sessionStorage.setItem('acessToken', acessToken);
-    sessionStorage.setItem('refreshToken', refreshToken);
-
-    console.log('Login bem-sucedido');
-
-    navigate("/dashboard");
-
-  } catch (err) {
-    console.error(err);
-    if (err.response && err.response.status === 401) {
-      setError("Cpf ou senha inválidos");
-    } else {
-      setError("Erro ao fazer login. Tente novamente.");
+  const formatCpf = (value) => {
+    const numericValue = value.replace(/\D/g, '');
+    
+    let formattedValue = numericValue;
+    if (numericValue.length > 3) {
+      formattedValue = `${numericValue.substring(0, 3)}.${numericValue.substring(3)}`;
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
+    if (numericValue.length > 6) {
+      formattedValue = `${formattedValue.substring(0, 7)}.${formattedValue.substring(7)}`;
+    }
+    if (numericValue.length > 9) {
+      formattedValue = `${formattedValue.substring(0, 11)}-${formattedValue.substring(11)}`;
+    }
+    
+    return formattedValue.substring(0, 14);
+  };
+
+  const handleCpfChange = (e) => {
+    const formattedCpf = formatCpf(e.target.value);
+    setCpf(formattedCpf);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      if (cpf.length !== 14) {
+        throw new Error("CPF incompleto. Formato esperado: 000.000.000-00");
+      }
+      const response = await api.post('/auth/login', {
+        cpf,
+        password
+      });
+
+
+      const { accessToken, refreshToken, userType } = response.data;
+
+      if (rememberMe) {
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+      } else {
+        sessionStorage.setItem('token', accessToken);
+        sessionStorage.setItem('refreshToken', refreshToken);
+      }
+      
+      sessionStorage.setItem('cpf', cpf);
+      sessionStorage.setItem('userType', userType);
+
+      console.log('Login bem-sucedido');
+
+      if (userType === 'ADMIN') {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.status === 401) {
+        setError("CPF ou senha inválidos");
+      } else {
+        setError("Erro ao fazer login. Tente novamente.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="login-container">
@@ -62,14 +98,15 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="cpf">Cpf</label>
+            <label htmlFor="cpf">CPF</label>
             <input
               type="text"
               id="cpf"
               value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
-              placeholder="Cpf"
+              onChange={handleCpfChange}
+              placeholder="000.000.000-00"
               required
+              maxLength={14}
             />
           </div>
 
