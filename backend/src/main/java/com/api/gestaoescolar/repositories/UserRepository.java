@@ -22,12 +22,16 @@ public interface UserRepository extends JpaRepository<User, Long>{
     Optional<List<Student>> findStudentsByCpf(@Param("cpfs") List<String> cpfs);
 
     Optional<User> findByCpf(@Param("cpf") String cpf);
+    Optional<User> findByEmail(String email);
 
     @Query(value = "SELECT * FROM users WHERE cpf = :cpf AND user_type = 'STUDENT'", nativeQuery = true)
     Optional<Student> findStudentByCpf(@Param("cpf") String cpf);
 
     @Query(value = "SELECT * FROM users WHERE cpf = :cpf AND user_type = 'TEACHER'", nativeQuery = true)
     Optional<Teacher> findTeacherByCpf(@Param("cpf") String cpf);
+
+    @Query(value = "SELECT u.user_type FROM users u WHERE u.cpf = :cpf", nativeQuery = true)
+    Optional<String> findTypeByCpf(@Param("cpf") String cpf);
 
     Optional<Student> findByRegistrationNumber(String registrationNumber);
     Page<Teacher> findBySpecialityIgnoreCaseContaining(String speciality, Pageable pageable);

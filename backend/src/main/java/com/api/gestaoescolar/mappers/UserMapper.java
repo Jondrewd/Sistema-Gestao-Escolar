@@ -1,15 +1,14 @@
 package com.api.gestaoescolar.mappers;
 
-import com.api.gestaoescolar.dtos.UserDTO;
 import com.api.gestaoescolar.dtos.StudentDTO;
 import com.api.gestaoescolar.dtos.TeacherDTO;
+import com.api.gestaoescolar.dtos.UserDTO;
+import com.api.gestaoescolar.entities.Admin;
 import com.api.gestaoescolar.entities.Student;
 import com.api.gestaoescolar.entities.Teacher;
 import com.api.gestaoescolar.entities.User;
 
 public class UserMapper {
-
-    private UserMapper() {}
 
     public static UserDTO toDto(User user) {
         if (user == null) return null;
@@ -20,13 +19,14 @@ public class UserMapper {
         userDto.setEmail(user.getEmail());
         userDto.setCreatedAt(user.getCreatedAt());
         userDto.setFullName(user.getFullName());
+        userDto.setPassword(user.getPassword());
 
         if (user instanceof Student) {
             userDto.setUserType("STUDENT");
         } else if (user instanceof Teacher) {
             userDto.setUserType("TEACHER");
         } else {
-            userDto.setUserType("USER");
+            userDto.setUserType("ADMIN");
         }
 
         return userDto;
@@ -37,12 +37,12 @@ public class UserMapper {
 
         User user;
 
-        if ("STUDENT".equalsIgnoreCase(userDto.getUserType())) {
-            user = new Student();
+        if ("ADMIN".equalsIgnoreCase(userDto.getUserType())) {
+            user = new Admin();
         } else if ("TEACHER".equalsIgnoreCase(userDto.getUserType())) {
             user = new Teacher();
         } else {
-            user = new User() {};
+            user = new Student();
         }
 
         user.setId(userDto.getId());
@@ -50,9 +50,10 @@ public class UserMapper {
         user.setEmail(userDto.getEmail());
         user.setCreatedAt(userDto.getCreatedAt());
         user.setFullName(userDto.getFullName());
-
+        user.setPassword(userDto.getPassword());
         return user;
     }
+
     public static void updateUserFromDto(UserDTO userDto, User user) {
         if (userDto == null || user == null) return;
 
@@ -80,12 +81,6 @@ public class UserMapper {
         }
         if (dto.getRegistrationNumber() != null) {
             student.setRegistrationNumber(dto.getRegistrationNumber());
-        }
-
-        if (dto.getClasses() != null) {
-            student.setClasses(
-                ClassesMapper.toEntity(dto.getClasses())
-            );
         }
 
 
@@ -132,7 +127,9 @@ public class UserMapper {
         dto.setEmail(student.getEmail());
         dto.setCreatedAt(student.getCreatedAt());
         dto.setRegistrationNumber(student.getRegistrationNumber());
-        dto.setClasses(ClassesMapper.toDto(student.getClasses()));
+        if (student.getClasses() != null) {
+            dto.setClasseId(student.getClasses().getId());
+        }
         dto.setGrades(GradeMapper.toDtoList(student.getGrades()));
         dto.setAttendances(AttendanceMapper.toDtoList(student.getAttendances()));
         dto.setFullName(student.getFullName());
@@ -153,5 +150,22 @@ public class UserMapper {
         dto.setFullName(teacher.getFullName());
 
         return dto;
+    }
+
+    public static void updateUserByType(UserDTO userDTO, Object targetDto) {
+        switch (targetDto) {
+            case StudentDTO studentDTO -> {
+                studentDTO.setFullName(userDTO.getFullName());
+                studentDTO.setCpf(userDTO.getCpf());
+                studentDTO.setEmail(userDTO.getEmail());
+            }
+            case TeacherDTO teacherDTO -> {
+                teacherDTO.setFullName(userDTO.getFullName());
+                teacherDTO.setCpf(userDTO.getCpf());
+                teacherDTO.setEmail(userDTO.getEmail());
+            }
+            default -> {
+            }
+        }
     }
 }
