@@ -9,6 +9,7 @@ public class LessonDTO {
 
     private final Long id;
     private final SubjectDTO subject;
+    private final Long classId;
     private final String teacher;
     private final DayOfWeek dayOfWeek;
     
@@ -20,10 +21,12 @@ public class LessonDTO {
     @Pattern(regexp = "^([01]\\d|2[0-3]):[0-5]\\d$", message = "Formato de hora inválido. Use HH:mm (24 horas)")
     private final String endTime;
 
-    public LessonDTO(Long id, SubjectDTO subject, String teacher, DayOfWeek dayOfWeek,
-                     String startTime, String endTime) {
+    public LessonDTO(Long id, SubjectDTO subject, Long classId, String teacher, DayOfWeek dayOfWeek,
+            @Pattern(regexp = "^([01]\\d|2[0-3]):[0-5]\\d$", message = "Formato de hora inválido. Use HH:mm (24 horas)") String startTime,
+            @Pattern(regexp = "^([01]\\d|2[0-3]):[0-5]\\d$", message = "Formato de hora inválido. Use HH:mm (24 horas)") String endTime) {
         this.id = id;
         this.subject = subject;
+        this.classId = classId;
         this.teacher = teacher;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
@@ -64,5 +67,9 @@ public class LessonDTO {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 '}';
+    }
+
+    public Long getClassId() {
+        return classId;
     }
 }

@@ -12,17 +12,17 @@ public class TokenDTO implements Serializable {
     private Boolean authenticateBoolean;
     private Date created;
     private Date expiration;
-    private String acessToken;
+    private String accessToken;
     private String refreshToken;
     
     public TokenDTO(){}
     
-    public TokenDTO(String cpf, Boolean authenticateBoolean, Date created, Date expiration, String acessToken,String refreshToken) {
+    public TokenDTO(String cpf, Boolean authenticateBoolean, Date created, Date expiration, String accessToken,String refreshToken) {
         this.cpf = cpf;
         this.authenticateBoolean = authenticateBoolean;
         this.created = created;
         this.expiration = expiration;
-        this.acessToken = acessToken;
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
     
@@ -59,10 +59,10 @@ public class TokenDTO implements Serializable {
         this.expiration = expiration;
     }
     public String getAcessToken() {
-        return acessToken;
+        return accessToken;
     }
-    public void setAcessToken(String acessToken) {
-        this.acessToken = acessToken;
+    public void setAcessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
     public String getRefreshToken() {
         return refreshToken;
@@ -78,7 +78,7 @@ public class TokenDTO implements Serializable {
         result = prime * result + ((authenticateBoolean == null) ? 0 : authenticateBoolean.hashCode());
         result = prime * result + ((created == null) ? 0 : created.hashCode());
         result = prime * result + ((expiration == null) ? 0 : expiration.hashCode());
-        result = prime * result + ((acessToken == null) ? 0 : acessToken.hashCode());
+        result = prime * result + ((accessToken == null) ? 0 : accessToken.hashCode());
         result = prime * result + ((refreshToken == null) ? 0 : refreshToken.hashCode());
         return result;
     }
@@ -111,10 +111,10 @@ public class TokenDTO implements Serializable {
                 return false;
         } else if (!expiration.equals(other.expiration))
             return false;
-        if (acessToken == null) {
-            if (other.acessToken != null)
+        if (accessToken == null) {
+            if (other.accessToken != null)
                 return false;
-        } else if (!acessToken.equals(other.acessToken))
+        } else if (!accessToken.equals(other.accessToken))
             return false;
         if (refreshToken == null) {
             if (other.refreshToken != null)

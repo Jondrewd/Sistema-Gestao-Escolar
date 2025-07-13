@@ -1,14 +1,25 @@
 package com.api.gestaoescolar.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
-public class AccountCredentialsDTO implements Serializable {
-    
-    private static final long serialVersionUID =1L;
+import org.hibernate.validator.constraints.br.CPF;
 
+public class AccountCredentialsDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @NotBlank(message = "O CPF é obrigatório")
+    @CPF(message = "CPF inválido")  
     private String cpf;
+
+    @NotBlank(message = "A senha é obrigatória")
+    @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres")
     private String password;
-    
+
+    public AccountCredentialsDTO() {}
+
     public AccountCredentialsDTO(String cpf, String password) {
         this.cpf = cpf;
         this.password = password;
@@ -60,6 +71,4 @@ public class AccountCredentialsDTO implements Serializable {
             return false;
         return true;
     }
-
-    
 }

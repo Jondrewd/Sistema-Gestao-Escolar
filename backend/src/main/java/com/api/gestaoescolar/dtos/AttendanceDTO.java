@@ -1,32 +1,45 @@
 package com.api.gestaoescolar.dtos;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.time.Instant;
 
 public class AttendanceDTO {
+
     private Long id;
+
+    @NotNull(message = "A data da presença é obrigatória")
+    @FutureOrPresent(message = "A data da presença não pode ser no passado")
     private Instant date;
+
+    @NotNull(message = "O campo 'presente' é obrigatório")
     private Boolean present;
+
+    @NotNull(message = "O CPF do estudante é obrigatório")
     private String student;
-    private String subjectName;
-    private String teacherName;
+
+    private String subjectName;  // Campo usado só em response, por enquanto sem validação
+
+    @NotNull(message = "O ID da matéria é obrigatório")
+    @Positive(message = "O ID da matéria deve ser um número positivo")
     private Long subjectId;
 
-    public AttendanceDTO(Instant date, Long subjectId, String subjectName,String teacherName, Long id, Boolean present, String student) {
+    public AttendanceDTO() {}
+
+    public AttendanceDTO(Instant date, Long subjectId, String subjectName, Long id, Boolean present, String student) {
         this.date = date;
         this.subjectId = subjectId;
         this.id = id;
         this.subjectName = subjectName;
-        this.teacherName = teacherName;
         this.present = present;
         this.student = student;
     }
 
-    public AttendanceDTO() {}
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -34,7 +47,6 @@ public class AttendanceDTO {
     public Instant getDate() {
         return date;
     }
-
     public void setDate(Instant date) {
         this.date = date;
     }
@@ -42,7 +54,6 @@ public class AttendanceDTO {
     public Boolean getPresent() {
         return present;
     }
-
     public void setPresent(Boolean present) {
         this.present = present;
     }
@@ -50,7 +61,6 @@ public class AttendanceDTO {
     public String getStudent() {
         return student;
     }
-
     public void setStudent(String student) {
         this.student = student;
     }
@@ -58,7 +68,6 @@ public class AttendanceDTO {
     public Long getSubjectId() {
         return subjectId;
     }
-
     public void setSubjectId(Long subjectId) {
         this.subjectId = subjectId;
     }
@@ -66,20 +75,7 @@ public class AttendanceDTO {
     public String getSubjectName() {
         return subjectName;
     }
-
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
     }
-
-    public String getTeacherName() {
-        return teacherName;
-    }
-
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
-    } 
-    
 }
-
-    
-
